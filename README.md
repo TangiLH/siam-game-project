@@ -1,4 +1,4 @@
 Tangi Le Henaff
-Mohame Boughariou
+Mohamed Boughariou
 Projet WEB2 - 2024
 Jeu du SIAM
