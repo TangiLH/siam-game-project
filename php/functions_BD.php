@@ -22,4 +22,5 @@ function users(){
     }
     return $tab;
     }
+    $db=null;
 ?>
