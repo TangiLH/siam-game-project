@@ -7,8 +7,10 @@
 </head>
 <body>
 <?php 
-include("functions_BD.php");
-print_r(users());
+include("../php/functions_BD.php");
+$users=users();
+$user=$users[0];
+echo $user->getPseudo();
 ?>
 </body>
 </html>
