@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- Coding by CodingLab | www.codinglabweb.com-->
 <html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8">
@@ -10,21 +9,24 @@
 <body>
   <div class="wrapper">
     <h2>Login</h2>
-    <form action="#">
+    <form method="post">
       <div class="input-box">
-        <input type="text" placeholder="Votre Nom" required>
+        <input type="text" name="pseudo" placeholder="Votre Nom" required>
       </div>
       <div class="input-box">
-        <input type="password" placeholder="Ecrire votre mot de passe" required>
+        <input type="password" name="mdp" placeholder="Ecrire votre mot de passe" required>
       </div>
       <div class="input-box button">
-        <input type="Submit" value="Login">
+        <input type="Submit" name="submit" value="Login">
       </div>
       <div class="text">
-        <h3>Vous n'avez pas encore de compte <a href="sign-up.html">Register now!</a></h3>
+        <h3>Vous n'avez pas encore de compte <a href="sign-up.php">Register now!</a></h3>
       </div>
     </form>
   </div>
-
+<?php 
+include("../php/functions_BD.php");
+login();
+?>
 </body>
 </html>
