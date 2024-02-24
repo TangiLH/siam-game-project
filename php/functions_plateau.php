@@ -9,22 +9,98 @@ use function PHPSTORM_META\type;
  /**
   * enumeration des directions possibles pour les pions
   */
-enum Direction{
+enum Direction implements JsonSerializable{
     case Haut;
     case Bas;
     case Gauche;
     case Droite;
     case Neutre;//neutre est la direction utilisée pour les cases Montagne et Vide
+
+    /**
+     * permet d'encoder l'enum en JSON
+     */
+    public function jsonSerialize(): string{
+        return match ($this) {
+            self::Haut => 'H',
+            self::Bas => 'B',
+            self::Gauche => 'G',
+            self::Droite => 'D',
+            self::Neutre => 'N'
+        };
+    }
+
+    /**
+     * sert a decoder l'enum depuis JSON
+     */
+    public static function jsonDeSerialize($char): Direction{
+        switch ($char) {
+            case 'H':
+                $retour= self::Haut;
+                break;
+            case 'B':
+                $retour= self::Bas;
+                break;
+            case 'G':
+                $retour= self::Gauche;
+                break;
+            case 'D':
+                $retour= self::Droite;
+                break;
+            case 'N':
+                $retour= self::Neutre;
+                break;
+            default:
+                $retour= self::Neutre;
+                break;
+            }
+        return $retour;
+    }
 }
 
 /**
  * enumeration des différents types de cases
  */
-enum typeCase{
+enum typeCase implements JsonSerializable{
     case Montagne;
     case Elephant;
     case Rhinoceros;
     case Vide;
+
+    /**
+     * permet d'encoder l'enum en JSON
+     */
+    public function jsonSerialize(): string{
+        return match ($this) {
+            self::Montagne => 'M',
+            self::Elephant => 'E',
+            self::Rhinoceros => 'R',
+            self::Vide => 'V'
+        };
+    }
+
+    /**
+     * sert a decoder l'enum depuis JSON
+     */
+    public static function jsonDeSerialize($char): typeCase{
+        switch ($char) {
+            case 'M':
+                $retour= self::Montagne;
+                break;
+            case 'E':
+                $retour= self::Elephant;
+                break;
+            case 'R':
+                $retour= self::Rhinoceros;
+                break;
+            case 'V':
+                $retour= self::Vide;
+                break;
+            default:
+                $retour= self::Vide;
+                break;
+            }
+        return $retour;
+    }
 }
 
 /**
@@ -49,7 +125,7 @@ enum typeCase{
     array(typeCase::Rhinoceros,Direction::Haut),
     array(typeCase::Rhinoceros,Direction::Haut),
     array(typeCase::Rhinoceros,Direction::Haut));
-    $plateau[]=array(typeCase::Vide,Direction::Neutre);
+    $plateau[]=array(array(typeCase::Vide,Direction::Neutre));
     $plateau[2][1]=array(typeCase::Montagne,Direction::Neutre);
     $plateau[2][2]=array(typeCase::Montagne,Direction::Neutre);
     $plateau[2][3]=array(typeCase::Montagne,Direction::Neutre);
@@ -118,12 +194,37 @@ function afficheCase($case){
  * encode le plateau en JSON
  */
 function encodePlateau($plateau){
-    return json_encode($plateau);
+    $retour=array();
+    $retourligne=array();
+    foreach($plateau as $ligne){
+        foreach($ligne as $case){
+            $retourligne[]=json_encode($case);
+        }
+        $retour[]=json_encode($retourligne);
+        $retourligne=array();
+    }
+    return json_encode($retour);
 }
 
 /**
  * decode le plateau
  */
 function decodePlateau($str_plateau){
-    return json_decode($str_plateau,true);
+    $decode=json_decode($str_plateau,true);
+    $plateau=array();
+    foreach($decode as $ligne){
+        $ligne=json_decode($ligne,true);
+        $ligneDecode=array();
+        foreach($ligne as $case){
+            $case=json_decode($case,true);
+            $caseDecode=array();
+            $caseDecode[]=typeCase::jsonDeSerialize($case[0]);
+            $caseDecode[]=Direction::jsonDeSerialize($case[1]);
+            
+            $ligneDecode[]=$caseDecode;
+        }
+        $plateau[]=$ligneDecode;
+        
+    }
+    return $plateau;
 }
