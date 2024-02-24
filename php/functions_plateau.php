@@ -288,8 +288,14 @@ function traitementPlateau(){
 
 /**
  * Verifie si une poussée est possible
+ * @param $plateau le plateau de jeu
+ * @param $ligne numero de la ligne de la case vers laquelle on veut pousser
+ * @param $colonne numero de la colonne de l a case vers laquelle on veut pousser
+ * @param $directionPion orientation du pion qui pousse
+ * @param $directionPoussee sens de la poussee
+ * @return bool vrai si la poussee est possible faux sinon
  */
-function verifPousse($plateau,$ligne,$colonne,$direction){
+function verifPousse($plateau,$ligne,$colonne,$directionPion,$directionPoussee){
     $cpt=0;
     $nextLigne=function()use(&$ligne){
         return $ligne;
@@ -297,7 +303,7 @@ function verifPousse($plateau,$ligne,$colonne,$direction){
     $nextColonne=function()use(&$colonne){
         return $colonne;
     };
-    switch($direction){//traitement de la direction de poussee
+    switch($directionPoussee){//traitement de la direction de poussee
         case Direction::Haut:
             $nextLigne =function()use(&$ligne){//fonction d'incrementation de la boucle
                 return --$ligne;
@@ -326,19 +332,19 @@ function verifPousse($plateau,$ligne,$colonne,$direction){
             return false;
     }
 
-    if($plateau[$ligne][$colonne][1]!=$direction){
-        $ligne=$nextLigne($ligne);
-        $colonne=$nextColonne($colonne);
+    if($directionPoussee!=$directionPion){
         if(!($ligne<5 && $ligne >=0 && $colonne<5 && $colonne >=0)){
+            
             return true;
         }
         return $plateau[$ligne][$colonne][0]==typeCase::Vide;
         //deplacement hors sens de poussee possible vers une case vide
     }
     else{
+        $cpt++;
         while($ligne<5 && $ligne >=0 && $colonne<5 && $colonne >=0){
             
-            if($plateau[$ligne][$colonne][1]==$direction){
+            if($plateau[$ligne][$colonne][1]==$directionPoussee){
                 $cpt++;
             }
             elseif($plateau[$ligne][$colonne][1]==$inverse){
