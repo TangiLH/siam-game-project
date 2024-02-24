@@ -450,7 +450,6 @@ function pousse($plateau,$ligne,$colonne,$directionPoussee){
         default:
             break;
     }
-    echo $ligne." ".$colonne;
     $plateau=ejecteCase($plateau,$ligne,$colonne);
     while($nextLigne()<=$borneSupLigne && $nextLigne() >=$borneInfLigne
     && $nextColonne<=$borneSupColonne && $nextColonne >=$borneInfColonne){
@@ -461,4 +460,61 @@ function pousse($plateau,$ligne,$colonne,$directionPoussee){
     $plateau[$ligne][$colonne]=array(typeCase::Vide,Direction::Neutre);
 
     return $plateau;
+}
+
+/**
+ * retourne un tableau contenant l'ensemble des actions possibles pour chaque case
+ */
+function actionsPossiblesPlateau($plateau){
+    $retour=array();
+
+    for($i=0;$i<7;$i++){
+        $ligneRetour=array();
+        for($j=0;$j<4;$j++){
+            $ligneRetour[]=actionsPossiblesCase($plateau,$i,$j);
+        }
+        $retour[]=$ligneRetour;
+    }
+}
+
+/**
+ * retourne un tableau contenant les actions possibles pour une case
+*/
+function actionsPossiblesCase($plateau,$ligne,$colonne){
+    $retour=array();
+    $case=$plateau[$ligne][$colonne];
+    if($case[0]!=typeCase::Elephant && $case[0]!=typeCase::Rhinoceros){
+        return $retour;
+    }
+    if($ligne<5){
+        if(verifPousse($plateau,$ligne+1,$colonne,$case[1],Direction::Bas)){
+            $retour[]=array($ligne+1,$colonne);
+        }
+        if(verifPousse($plateau,$ligne-1,$colonne,$case[1],Direction::Haut)){
+            $retour[]=array($ligne-1,$colonne);
+        }
+        if(verifPousse($plateau,$ligne,$colonne+1,$case[1],Direction::Droite)){
+            $retour[]=array($ligne,$colonne+1);
+        }
+        if(verifPousse($plateau,$ligne,$colonne-1,$case[1],Direction::Gauche)){
+            $retour[]=array($ligne,$colonne-1);
+        }
+    }
+    elseif($ligne<7){
+        for($i=0;$i<5;$i++){
+            if(verifPousse($plateau,$i,0,Direction::Droite,Direction::Droite)){
+                $retour[]=array($i,0);
+            }
+            if(verifPousse($plateau,$i,4,Direction::Gauche,Direction::Gauche)){
+                $retour[]=array($i,4);
+            }
+            if(verifPousse($plateau,0,$i,Direction::Bas,Direction::Bas)){
+                $retour[]=array(0,$i);
+            }
+            if(verifPousse($plateau,4,$i,Direction::Haut,Direction::Haut)){
+                $retour[]=array(4,$i);
+            }
+        }
+    }
+    return $retour;
 }
