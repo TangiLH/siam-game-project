@@ -356,6 +356,54 @@ function verifPousse($plateau,$ligne,$colonne,$directionPion,$directionPoussee){
         }
     }
     return $cpt>0;
+}
 
+/**
+ * procede à l'échange des deux cases sans aucune vérification
+ */
+function swap($plateau,$ligneDep,$colonneDep,$ligneArr,$colonneArr){
+    $mem=$plateau[$ligneArr][$colonneArr];
+    $plateau[$ligneArr][$colonneArr]=$plateau[$ligneDep][$colonneDep];
+    $plateau[$ligneDep][$colonneDep]=$mem;
+    return $plateau;
+}
+
+/**
+ * insere la case dans la premiere case vide de la ligne
+ */
+function insereListe($ligne,$case){
+    foreach($ligne as $c){
+        if($c[0]==typeCase::Vide){
+            $c=$case;
+        }
+    }
+    return $ligne;
+}
+
+/**
+ * ejecte la case du plateau
+ */
+function ejecteCase($plateau,$ligne,$colonne){
+    $case=$plateau[$ligne][$colonne];
+    switch($case[0]){
+        case typeCase::Montagne:
+            $plateau[7][0]=array(typeCase::Montagne,Direction::Neutre);
+            break;
+        case typeCase::Rhinoceros:
+            $plateau[6]=insereListe($plateau[6],array(typeCase::Rhinoceros,Direction::Haut));
+            break;
+        case typeCase::Elephant:
+            $plateau[5]=insereListe($plateau[5],array(typeCase::Elephant,Direction::Haut));
+            break;
+        default:
+            break;
+    }
+    return $plateau;
+}
+
+/**
+ * effectue la poussee sans verification
+ */
+function pousse($plateau,$ligne,$colonne,$direction){
 
 }
