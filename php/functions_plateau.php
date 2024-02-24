@@ -372,12 +372,14 @@ function swap($plateau,$ligneDep,$colonneDep,$ligneArr,$colonneArr){
  * insere la case dans la premiere case vide de la ligne
  */
 function insereListe($ligne,$case){
+    $retour=array();
     foreach($ligne as $c){
-        if($c[0]==typeCase::Vide){
+        if($c[0]->name=="Vide"){
             $c=$case;
         }
+        $retour[]=$c;
     }
-    return $ligne;
+    return $retour;
 }
 
 /**
@@ -398,12 +400,65 @@ function ejecteCase($plateau,$ligne,$colonne){
         default:
             break;
     }
+    $plateau[$ligne][$colonne]=array(typeCase::Vide,Direction::Neutre);
     return $plateau;
 }
 
 /**
  * effectue la poussee sans verification
  */
-function pousse($plateau,$ligne,$colonne,$direction){
+function pousse($plateau,$ligne,$colonne,$directionPoussee){
+    $borneInfLigne=0;
+    $borneSupLigne=4;
+    $borneInfColonne=0;
+    $borneSupColonne=4;
+    $nextLigne=function()use(&$ligne){
+        return $ligne;
+    };
+    $nextColonne=function()use(&$colonne){
+        return $colonne;
+    };
+    switch($directionPoussee){//traitement de la direction de poussee
+        case Direction::Haut:
+            $nextLigne =function()use(&$ligne){//fonction d'incrementation de la boucle
+                return $ligne+1;
+            };
+            $borneSupLigne=$ligne;
+            $ligne=0;
+            break;
+        case Direction::Bas:
+            $nextLigne =function()use(&$ligne){
+                return $ligne-1;
+            };
+            $borneInfLigne=$ligne;
+            $ligne=4;
+            break;
+        case Direction::Gauche:
+            $nextColonne =function()use(&$colonne){
+                return $colonne+1;
+            };
+            $borneSupColonne=$colonne;
+            $colonne=0;
+            break;
+        case Direction::Droite:
+            $nextColonne =function()use(&$colonne){
+                return $colonne-1;
+            };
+            $borneInfColonne=$colonne;
+            $colonne=4;
+            break;
+        default:
+            break;
+    }
+    echo $ligne." ".$colonne;
+    $plateau=ejecteCase($plateau,$ligne,$colonne);
+    while($nextLigne()<=$borneSupLigne && $nextLigne() >=$borneInfLigne
+    && $nextColonne<=$borneSupColonne && $nextColonne >=$borneInfColonne){
+        $plateau=swap($plateau, $ligne,$colonne,$nextLigne(),$nextColonne());
+        $ligne=$nextLigne();
+        $colonne=$nextColonne();
+    }
+    $plateau[$ligne][$colonne]=array(typeCase::Vide,Direction::Neutre);
 
+    return $plateau;
 }
