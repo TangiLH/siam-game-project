@@ -3,7 +3,19 @@
 /**
  * initialise le plateau de jeu pour le début de la partie.
  */
-function initPlateau(){
+enum Direction{
+    case Haut;
+    case Bas;
+    case Gauche;
+    case Droite;
+}
+
+enum Pion{
+    case Montagne;
+    case Elephant;
+    case Rhinoceros;
+}
+ function initPlateau(){
     $plateau=array();
     for($i=0;$i<5;$i++){
         $plateau[]=array("","","","","");
