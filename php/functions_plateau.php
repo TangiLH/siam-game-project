@@ -236,7 +236,7 @@ function afficheLignePlateau($plateau,$numLigne){
     $ligne=$plateau[$numLigne];
     for($j=0;$j<5;$j++){
         $case=$ligne[$j];
-        echo "<button type=\"button\" name=\"caseChoix\" value=\""
+        echo "<button type=\"submit\" name=\"caseChoix\" value=\""
         .$numLigne.",".$j."\">".afficheCase($case)."</button>";
         
     }
@@ -247,15 +247,15 @@ function afficheLignePlateau($plateau,$numLigne){
  * affiche les bouton pour contrôler les pions
  */
 function afficheBoutonsControle(){
-    $deplacement="<button type=\"button\" name=\"Deplacement\" value=\"";
+    $deplacement="<button type=\"submit\" name=\"Deplacement\" value=\"";
     echo $deplacement.Direction::Haut->name."\">HAUT</button>";
     echo $deplacement.Direction::Bas->name."\">BAS</button>";
     echo $deplacement.Direction::Gauche->name."\">GAUCHE</button>";
     echo $deplacement.Direction::Droite->name."\">DROITE</button>";
     echo"</br>";
 
-    $rotation="<button type=\"button\" name=\"Rotation\" value=\"";
-    echo $rotation.Direction::Haut->name."\">r SHAUT</button>";
+    $rotation="<button type=\"submit\" name=\"Rotation\" value=\"";
+    echo $rotation.Direction::Haut->name."\">r HAUT</button>";
     echo $rotation.Direction::Bas->name."\">r BAS</button>";
     echo $rotation.Direction::Gauche->name."\">R GAUCHE</button>";
     echo $rotation.Direction::Droite->name."\">R DROITE</button>";
@@ -276,14 +276,60 @@ function affichePlateau($plateau){
     afficheLignePlateau($plateau,6);
     echo "</br>";
     afficheBoutonsControle();
+    echo "<button type=\"submit\" name=\"submitCoup\">Valide</button>";
+    echo "<button type=\"submit\" name=\"supprCaseChoix\">Decocher case</button>";
     echo "</form>";
+}
+
+/**
+ * cherche si $tableau contient un tableau identique à $tab
+ */
+function dansTableau($tab,$tableau){
+    $retour=false;
+    foreach($tableau as $t){
+        if($t==$tab){
+            $retour=true;
+        }
+    }
+    return $retour;
 }
 
 /**
  * traite les actions du joueur sur le plateau grâce à la méthode POST
  */
-function traitementPlateau(){
-
+function traitementPlateau($plateau){
+        echo $_POST["Rotation"];
+        echo $_POST["Deplacement"];
+        echo $_POST["caseChoix"];
+        $cookie=json_decode($_SESSION["actionJoueur"],true);
+        if(isset($_POST["supprCaseChoix"])){
+            $cookie["caseOrigine"]="";
+        }
+        if(isset($_POST["caseChoix"])){
+            $caseChoix=array($_POST["caseChoix"][0],$_POST["caseChoix"][2]);
+            if($cookie["caseOrigine"]==""){
+                $cookie["caseOrigine"]=$caseChoix;
+            }
+            else{
+                $caseDest=$caseChoix;
+                $caseChoix=$cookie["caseOrigine"];
+                $coups=actionsPossiblesCase($plateau,$caseChoix[0],$caseChoix[1]);
+                if(dansTableau($caseDest,$coups)){
+                    echo "coup possible";
+                    $cookie["caseDest"]=$_POST["caseChoix"];
+                }
+                else{
+                    echo "coup impossible";
+                }
+            }
+        }
+        else{
+            echo "b";
+        }
+        $_SESSION["actionJoueur"]=json_encode($cookie);
+        //setcookie("actionJoueur",json_encode($cookie),30*86400);
+        
+    
 }
 
 /**
@@ -475,6 +521,7 @@ function actionsPossiblesPlateau($plateau){
         }
         $retour[]=$ligneRetour;
     }
+    return $retour;
 }
 
 /**
