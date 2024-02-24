@@ -188,7 +188,7 @@ function afficheCase($case){
             $strDirection= "Err";
             break;
         }
-        return $strDirection." ".$strType;
+        return $strType." ".$strDirection;
 }
 /**
  * encode le plateau en JSON
@@ -291,54 +291,60 @@ function traitementPlateau(){
  */
 function verifPousse($plateau,$ligne,$colonne,$direction){
     $cpt=0;
-    $nextLigne=function($ligne){
+    $nextLigne=function()use(&$ligne){
         return $ligne;
     };
-    $nextColonne=function($colonne){
+    $nextColonne=function()use(&$colonne){
         return $colonne;
     };
     switch($direction){//traitement de la direction de poussee
         case Direction::Haut:
-            $nextLigne =function($ligne){//fonction d'incrementation de la boucle
-                return $ligne--;
+            $nextLigne =function()use(&$ligne){//fonction d'incrementation de la boucle
+                return --$ligne;
             };
             $inverse=Direction::Bas;//inverse de la direction de poussee
             break;
         case Direction::Bas:
-            $nextLigne =function($ligne){
-                return $ligne++;
+            $nextLigne =function()use(&$ligne){
+                return ++$ligne;
             };
             $inverse=Direction::Haut;
             break;
         case Direction::Gauche:
-            $nextColonne =function($colonne){
-                return $colonne--;
+            $nextColonne =function()use(&$colonne){
+                return --$colonne;
             };
             $inverse=Direction::Droite;
             break;
         case Direction::Droite:
-            $nextColonne =function($colonne){
-                return $colonne++;
+            $nextColonne =function()use(&$colonne){
+                return ++$colonne;
             };
             $inverse=Direction::Gauche;
             break;
         default:
             return false;
     }
-    if($plateau[$ligne][$colonne][0]!=$direction){
-        return false;
+
+    if($plateau[$ligne][$colonne][1]!=$direction){
+        $ligne=$nextLigne($ligne);
+        $colonne=$nextColonne($colonne);
+        if(!($ligne<5 && $ligne >=0 && $colonne<5 && $colonne >=0)){
+            return true;
+        }
+        return $plateau[$ligne][$colonne][0]==typeCase::Vide;
+        //deplacement hors sens de poussee possible vers une case vide
     }
     else{
-        $cpt++;
         while($ligne<5 && $ligne >=0 && $colonne<5 && $colonne >=0){
             
-            if($plateau[$ligne][$colonne][0]==$direction){
+            if($plateau[$ligne][$colonne][1]==$direction){
                 $cpt++;
             }
-            elseif($plateau[$ligne][$colonne][0]==$inverse){
+            elseif($plateau[$ligne][$colonne][1]==$inverse){
                 $cpt--;
             }
-
+            
             $ligne=$nextLigne($ligne);
             $colonne=$nextColonne($colonne);
         }
