@@ -228,3 +228,52 @@ function decodePlateau($str_plateau){
     }
     return $plateau;
 }
+
+/**
+ * affiche une ligne du plateau passé en paramètre, avec les boutons
+ */
+function afficheLignePlateau($plateau,$numLigne){
+    $ligne=$plateau[$numLigne];
+    for($j=0;$j<5;$j++){
+        $case=$ligne[$j];
+        echo "<button type=\"button\" name=\"caseChoix\" value=\""
+        .$numLigne.",".$j."\">".afficheCase($case)."</button>";
+        
+    }
+    echo "<br>";
+}
+
+/**
+ * affiche les bouton pour contrôler les pions
+ */
+function afficheBoutonsControle(){
+    $deplacement="<button type=\"button\" name=\"Deplacement\" value=\"";
+    echo $deplacement.Direction::Haut->name."\">HAUT</button>";
+    echo $deplacement.Direction::Bas->name."\">BAS</button>";
+    echo $deplacement.Direction::Gauche->name."\">GAUCHE</button>";
+    echo $deplacement.Direction::Droite->name."\">DROITE</button>";
+    echo"</br>";
+
+    $rotation="<button type=\"button\" name=\"Rotation\" value=\"";
+    echo $rotation.Direction::Haut->name."\">r SHAUT</button>";
+    echo $rotation.Direction::Bas->name."\">r BAS</button>";
+    echo $rotation.Direction::Gauche->name."\">R GAUCHE</button>";
+    echo $rotation.Direction::Droite->name."\">R DROITE</button>";
+}
+
+/**
+ * affiche le plateau et les boutons de contrôle
+ */
+function affichePlateau($plateau){
+    echo "<form method=\"POST\">";
+    afficheLignePlateau($plateau,5);
+    for($i=0;$i<5;$i++){
+        $ligne=$plateau[$i];
+        afficheLignePlateau($plateau,$i);
+        
+    }
+    afficheLignePlateau($plateau,6);
+    echo "</br>";
+    afficheBoutonsControle();
+    echo "</form>";
+}
