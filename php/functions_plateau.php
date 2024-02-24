@@ -267,13 +267,83 @@ function afficheBoutonsControle(){
 function affichePlateau($plateau){
     echo "<form method=\"POST\">";
     afficheLignePlateau($plateau,5);
+    echo "</br>";
     for($i=0;$i<5;$i++){
-        $ligne=$plateau[$i];
         afficheLignePlateau($plateau,$i);
         
     }
+    echo "</br>";
     afficheLignePlateau($plateau,6);
     echo "</br>";
     afficheBoutonsControle();
     echo "</form>";
+}
+
+/**
+ * traite les actions du joueur sur le plateau grâce à la méthode POST
+ */
+function traitementPlateau(){
+
+}
+
+/**
+ * Verifie si une poussée est possible
+ */
+function verifPousse($plateau,$ligne,$colonne,$direction){
+    $cpt=0;
+    $nextLigne=function($ligne){
+        return $ligne;
+    };
+    $nextColonne=function($colonne){
+        return $colonne;
+    };
+    switch($direction){//traitement de la direction de poussee
+        case Direction::Haut:
+            $nextLigne =function($ligne){//fonction d'incrementation de la boucle
+                return $ligne--;
+            };
+            $inverse=Direction::Bas;//inverse de la direction de poussee
+            break;
+        case Direction::Bas:
+            $nextLigne =function($ligne){
+                return $ligne++;
+            };
+            $inverse=Direction::Haut;
+            break;
+        case Direction::Gauche:
+            $nextColonne =function($colonne){
+                return $colonne--;
+            };
+            $inverse=Direction::Droite;
+            break;
+        case Direction::Droite:
+            $nextColonne =function($colonne){
+                return $colonne++;
+            };
+            $inverse=Direction::Gauche;
+            break;
+        default:
+            return false;
+    }
+    if($plateau[$ligne][$colonne][0]!=$direction){
+        return false;
+    }
+    else{
+        $cpt++;
+        while($ligne<5 && $ligne >=0 && $colonne<5 && $colonne >=0){
+            
+            if($plateau[$ligne][$colonne][0]==$direction){
+                $cpt++;
+            }
+            elseif($plateau[$ligne][$colonne][0]==$inverse){
+                $cpt--;
+            }
+
+            $ligne=$nextLigne($ligne);
+            $colonne=$nextColonne($colonne);
+        }
+    }
+    return $cpt>0;
+
+
 }
