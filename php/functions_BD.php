@@ -26,8 +26,6 @@ function users(){
         $db = connexpdo("../db/projet-web2");
         
         $hash = password_hash($user->getMdp(), PASSWORD_DEFAULT);
-        $user->getPseudo();
-        $user->getEstAdmin();
         $sql = 'INSERT INTO Utilisateurs (pseudo, mdp, estAdmin) VALUES ("'.$user->getPseudo().'", "'.$hash.'", '.$user->getEstAdmin().')';
         $db->exec($sql);
         $db = null;
@@ -41,12 +39,11 @@ function verifieLogin($pseudo,$mdp){
         $user=verifieByPseudo($pseudo);
         if(password_verify($mdp, $user->getMdp())){
             session_start();
-            $_SESSION['pseudo']=$user->getPseudo();
-            $_SESSION['estadmin']=$user->getEstAdmin()==1?true:false;
-            header("Location: testBD.php");
+            $_SESSION['user']['pseudo']=$user->getPseudo();
+            $_SESSION['user']['estadmin']=$user->getEstAdmin()==1?true:false;
+            header('Location: portail.php');
         }else{
             echo '<script>alert("Mauvais mot de passe! ");</script>';
-            echo $mdp.' '.$user->getMdp();
         }
     }
 
@@ -87,14 +84,47 @@ function register(){
   }
   function verifieLoginSession(){
     session_start();
-    if(!isset($_SESSION["pseudo"])){
+    if(!isset($_SESSION['user']["pseudo"])){
         header("Location: login.php");
     }
   }
   function logout(){
     if(isset($_POST["logout"])){
+        unset($_SESSION['user']);
         session_destroy();
-        header("Location: ../login.php");
+        header("Location: ../pages/login.php");
     }
   }
+
+  function updatePassword(){
+    if(isset($_POST["updateP"])){
+        try {
+            $db = connexpdo("../db/projet-web2");
+            
+            // Check if connection is successful
+            if(!$db) {
+                throw new Exception("Failed to connect to the database.");
+            }
+
+            $hash = password_hash($_POST["newMdp"], PASSWORD_DEFAULT);
+            $sql = 'UPDATE Utilisateurs
+                    SET mdp = "'.$hash.'"
+                    WHERE pseudo = "'.$_SESSION['user']['pseudo'].'";';
+            $affectedRows = $db->exec($sql);
+
+            // Check if the query was successful
+            if($affectedRows === false || $affectedRows == 0) {
+                throw new Exception("Failed to update password.");
+            }
+
+            $db = null;
+            setcookie("ModifieTrue", true, time()+5);
+            header("Location: profile.php");
+        } catch(Exception $e) {
+            // Handle the exception, you can log it or display an error message
+            echo "Error: " . $e->getMessage();
+        }
+    }
+}
+
 ?>

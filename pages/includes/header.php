@@ -2,7 +2,7 @@
 
 <nav class="navbar navbar-expand-xl navbar-dark bg-primary">
   <div class="container-fluid">
-    <a class="navbar-brand" href="#">Siam</a>
+    <a class="navbar-brand" href="../pages/portail.php">Siam</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -29,14 +29,24 @@
           <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
         </li>
       </ul>
-      <form class="d-flex" method="post">
+      <div class="dropdown-center">
+  <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+  Dropdown Menu 
+  </button>
+  <ul class=" dropdown-menu">
+    <li><form class="d-flex" method="post">
         <!-- <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"> -->
-        <input class="btn btn-outline-light" type="submit" name="logout" value="Log Out"></input>
-        
-      </form>
+        <input class="dropdown-item" type="submit" name="logout" value="Log Out"></input>&nbsp;&nbsp;
+      
+      </form></li>
+    <li><hr class="dropdown-divider"></li>
+    <li><a class="dropdown-item" href="../pages/profile.php">Change MDP</a></li>
+  </ul>
+</div>&nbsp;&nbsp;&nbsp;&nbsp;
+
+      
       <?php if(isset($_POST["logout"])){
-        session_destroy();
-        header("Location: login.php");
+        logout();
     }?>
     </div>
   </div>
