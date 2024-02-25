@@ -12,25 +12,18 @@ verifieLoginSession();
 include("includes/header.php");
 $modifie=false;
 ?><br><br><br>
-<h3 class="text-center">Modifier votre mot de passe</h3>
-<?php if(isset($_COOKIE["ModifieTrue"])) :?>
-    <h6 class="text-center text-success">Mot de passe est modifié!</h6>
-<?php endif; ?>
+<h3 class="text-center">Créer votre partie!</h3>
 <div class="container d-flex justify-content-center">
     <form id="passwordForm" method="post" class="needs-validation">
         <div class="mb-3">
-            <label for="exampleInputEmail1" class="form-label">Nom</label>
-            <input type="email" value="<?php echo $_SESSION['user']['pseudo']; ?>" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" disabled>
-        </div>
-        <div class="mb-3">
-            <label for="exampleInputPassword1" class="form-label">Password</label>
-            <input type="password" name="newMdp" class="form-control" id="exampleInputPassword1" required>
+            <label for="nomPartie" class="form-label">Nom</label>
+            <input type="text" name="nomPartie" class="form-control" id="nomPartie" required>
         </div>
   
-        <button type="button" id="openConfirmationModal" class="btn btn-primary">Modifie</button>
+        <button type="button" id="openConfirmationModal" class="btn btn-primary">Créer</button>
     </form>
 
-    <?php updatePassword(); ?>
+    <?php creePartie(); ?>
 </div>
 </body>
 </html>
@@ -44,14 +37,14 @@ $modifie=false;
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Êtes-vous sûr de modifier votre mot de passe ?
+                Êtes-vous sûr de créer cette partie ?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <form id="confirmationForm" method="post">
                     <!-- Hidden input field to hold the password value -->
-                    <input type="hidden" id="passwordValue" name="newMdp">
-                    <button type="submit" name="updateP" class="btn btn-primary">Confirmer</button>
+                    <input type="hidden" id="nomPartieValue" name="nomPartieValue">
+                    <button type="submit" name="creePartie" class="btn btn-primary">Confirmer</button>
                 </form>
             </div>
         </div>
@@ -62,13 +55,13 @@ $modifie=false;
     // Add event listener to the button that opens the confirmation modal
     document.getElementById("openConfirmationModal").addEventListener("click", function() {
         // Get the password value from the first form
-        var password = document.getElementById("exampleInputPassword1").value;
+        var password = document.getElementById("nomPartie").value;
         // Check if the password field is empty
         if (password.trim() === "") {
-            alert("S'il vous plait éntrer un mot de passe!.");
+            alert("S'il vous plait éntrer un nom de partie.");
         } else {
             // Set the password value to the hidden input field in the confirmation form
-            document.getElementById("passwordValue").value = password;
+            document.getElementById("nomPartieValue").value = password;
             // Open the confirmation modal
             var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
             myModal.show();

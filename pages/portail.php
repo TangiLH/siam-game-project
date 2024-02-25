@@ -15,7 +15,17 @@ include("includes/header.php");
 echo $_SESSION['user']['pseudo'].' '.$_SESSION['user']['estadmin'];
 
 
-?>
+?><br>
+<h1 class="text-center" >Parties</h1><br>
+<?php if(isset($_COOKIE["PartieCreer"])) :?>
+    <h6 class="text-center text-success">Votre partie est bien créer!</h6>
+<?php endif; ?>
+<div class="d-flex justify-content-center">
+    <a class="btn btn-info  btn-lg" href="cree.php">Créer</a>&nbsp;&nbsp;
+    <a class="btn btn-info  btn-lg" href="#">Rejoindre</a>&nbsp;&nbsp;
+    <a class="btn btn-info  btn-lg" href="#">Visualiser</a>&nbsp;&nbsp;
+</div>
+
 
 </body>
 </html>

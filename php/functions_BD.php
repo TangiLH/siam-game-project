@@ -17,7 +17,7 @@ function users(){
     $sql = 'SELECT idJoueur, pseudo, mdp, estAdmin FROM Utilisateurs';
     $result = $db->query($sql) ;
     while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-        $tab[]=new User($row['pseudo'],$row['mdp'],$row['estAdmin']);
+        $tab[]=new User($row['idJoueur'],$row['pseudo'],$row['mdp'],$row['estAdmin']);
     }
     $db=null;
     return $tab;
@@ -41,6 +41,7 @@ function verifieLogin($pseudo,$mdp){
             session_start();
             $_SESSION['user']['pseudo']=$user->getPseudo();
             $_SESSION['user']['estadmin']=$user->getEstAdmin()==1?true:false;
+            $_SESSION['user']['id']=$user->getId();
             header('Location: portail.php');
         }else{
             echo '<script>alert("Mauvais mot de passe! ");</script>';
@@ -69,7 +70,7 @@ function register(){
       }else if(verifieByPseudo($_POST["pseudo"])){
         echo '<script>alert("Le pseudo existe déjà!");</script>';
       }else{
-        $user=new User($_POST["pseudo"],$_POST["mdp"],0);
+        $user=new User(0,$_POST["pseudo"],$_POST["mdp"],0);
         ajouterUtilisateur($user);
         header("Location: login.php");
       }
@@ -118,13 +119,29 @@ function register(){
             }
 
             $db = null;
-            setcookie("ModifieTrue", true, time()+5);
+            setcookie("ModifieTrue", true, time()+1);
             header("Location: profile.php");
         } catch(Exception $e) {
-            // Handle the exception, you can log it or display an error message
             echo "Error: " . $e->getMessage();
         }
     }
+}
+
+function creePartie(){
+  if(isset($_POST["creePartie"])){
+    try {
+    $db = connexpdo("../db/projet-web2");
+    $sql = 'INSERT INTO Parties (plateau, idJoueur1,idJoueur2) 
+    VALUES ("'.$_POST["nomPartieValue"].'", '.$_SESSION['user']['id'].', '.$_SESSION['user']['id'].')';
+    $db->exec($sql);
+    $db = null;
+    setcookie("PartieCreer", true, time()+1);
+    header("Location: portail.php");
+    }catch(Exception $e) {
+      echo "Error: " . $e->getMessage();
+  }
+
+  }
 }
 
 ?>
