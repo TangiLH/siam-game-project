@@ -184,15 +184,26 @@ function usersAsOptions(){
 /*
 * Retourne un tableau de toutes les parties
 */ 
-function showParties(){
+function parties(){
   $db=connexpdo("../db/projet-web2");
   $tab=array();
-  $sql = 'SELECT idJoueur, pseudo, mdp, estAdmin FROM Parties';
+  $sql = 'SELECT * FROM Parties';
   $result = $db->query($sql) ;
   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-      $tab[]=new User($row['idJoueur'],$row['pseudo'],$row['mdp'],$row['estAdmin']);
+      $tab[]=array("idParties"=>$row['idParties'],"idJoueur1"=>$row['idJoueur1'],"idJoueur2"=>$row['idJoueur1'],"plateau"=>$row['plateau'],"idJoueurGagnant"=>$row['idJoueurGagnant'],"idJoueurTour"=>$row['idJoueurTour'],);
   }
   $db=null;
   return $tab;
   }
+/*
+* Affichier les parties en cours en tanque des lignes du tableau
+*/ 
+function partiesAsRows(){
+  $users=parties();
+  foreach($users as $user){
+    if($user->getId()!=$_SESSION['user']['id']){
+      echo '<option value="'.$user->getId().'" >'.$user->getPseudo().'</option>';
+    }
+  }
+}
 ?>
