@@ -298,9 +298,7 @@ function dansTableau($tab,$tableau){
  * traite les actions du joueur sur le plateau grâce à la méthode POST
  */
 function traitementPlateau($plateau){
-        echo $_POST["Rotation"];
-        echo $_POST["Deplacement"];
-        echo $_POST["caseChoix"];
+        
         $cookie=json_decode($_SESSION["actionJoueur"],true);
         if(isset($_POST["supprCaseChoix"])){
             $cookie["caseOrigine"]="";
