@@ -27,12 +27,14 @@ class Partie {
     function getIdJoueurTour(){
         return $this->idJoueurTour;
     }
-    
-    function __construct($id,$pseudo,$mdp,$estAdmin){
+
+    function __construct($id,$plateau,$idJoueur1,$idJoueur2,$idJoueurGagnant,$idJoueurTour){
         $this->id=$id;
-        $this->pseudo=$pseudo;
-        $this->mdp=$mdp;
-        $this->estAdmin=$estAdmin;
+        $this->plateau=$plateau;
+        $this->idJoueur1=$idJoueur1;
+        $this->idJoueur2=$idJoueur2;
+        $this->idJoueurGagnant=$idJoueurGagnant;
+        $this->idJoueurTour=$idJoueurTour;
     }
     
 }

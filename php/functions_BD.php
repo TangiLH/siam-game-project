@@ -1,5 +1,6 @@
 <?php
 include("User.php");
+include("Partie.php");
 
 /*
 * Function pour connexion a la base sql lite 3 avec PDO
@@ -190,7 +191,7 @@ function parties(){
   $sql = 'SELECT * FROM Parties';
   $result = $db->query($sql) ;
   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-      $tab[]=array("idParties"=>$row['idParties'],"idJoueur1"=>$row['idJoueur1'],"idJoueur2"=>$row['idJoueur1'],"plateau"=>$row['plateau'],"idJoueurGagnant"=>$row['idJoueurGagnant'],"idJoueurTour"=>$row['idJoueurTour'],);
+      $tab[]=new Partie($row['idParties'],$row['plateau'],$row['idJoueur1'],$row['idJoueur2'],$row['idJoueurGagnant'],$row['idJoueurTour']);
   }
   $db=null;
   return $tab;
@@ -199,11 +200,60 @@ function parties(){
 * Affichier les parties en cours en tanque des lignes du tableau
 */ 
 function partiesAsRows(){
-  $users=parties();
-  foreach($users as $user){
-    if($user->getId()!=$_SESSION['user']['id']){
-      echo '<option value="'.$user->getId().'" >'.$user->getPseudo().'</option>';
+  $parties=parties();
+  foreach($parties as $partie){
+    if($partie->getIdJoueur1()==$_SESSION["user"]["id"] || $partie->getIdJoueur2()==$_SESSION["user"]["id"]){
+      if($partie->getIdJoueurGagnant()=="" && $partie->getIdJoueurTour()==""){
+        $j1=getJoueurById($partie->getIdJoueur1());
+        $j2=getJoueurById($partie->getIdJoueur2());
+        echo '<tr>
+        <th scope="row">'.$partie->getId().'</th>
+        <td>'.$partie->getPlateau().'</td>
+        <td>'.$j1->getPseudo().'</td>
+        <td>'.$j2->getPseudo().'</td>
+        <td>
+        <form method="get">
+          <input type="hidden" value="'.$partie->getId().'" name="id">
+          <input class="btn btn-info  btn-md" type="submit" name="submit" value="Joindre"></input>
+        </form>
+        </td>
+      </tr>';
+      }
     }
+  }
+}
+/*
+* Retourner le joueur par son ID
+*/ 
+function getJoueurById($id){
+  $users=users();
+  foreach($users as $user){
+    if($user->getId()==$id){
+      return $user;
+    }
+  }
+  return null;
+}
+
+/*
+* Retourner le partie par son ID
+*/ 
+function getPartieById($id){
+  $parties=parties();
+  foreach($parties as $partie){
+    if($partie->getId()==$id){
+      return $partie;
+    }
+  }
+  return null;
+}
+
+
+function getPartie(){
+  if(isset($_GET["submit"])){
+    $partie=getPartieById($_GET["id"]);
+    $_SESSION["partie"]["id"]=$_GET["id"];
+    $_SESSION["partie"]["plateau"]=$partie->getPlateau();
   }
 }
 ?>
