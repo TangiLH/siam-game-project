@@ -19,6 +19,13 @@ $modifie=false;
             <label for="nomPartie" class="form-label">Nom</label>
             <input type="text" name="nomPartie" class="form-control" id="nomPartie" required>
         </div>
+        <div class="mb-3">
+        <label for="adversaire" class="form-label">Adversaire</label>
+        <select name="adversaire" id="advS" class="form-select" aria-label="Default select example">
+            <option selected disabled hidden value="">Choisir votre adversaire</option>
+            <?php usersAsOptions(); ?>
+        </select>
+        </div>
   
         <button type="button" id="openConfirmationModal" class="btn btn-primary">Créer</button>
     </form>
@@ -44,6 +51,7 @@ $modifie=false;
                 <form id="confirmationForm" method="post">
                     <!-- Hidden input field to hold the password value -->
                     <input type="hidden" id="nomPartieValue" name="nomPartieValue">
+                    <input type="hidden" id="adversaireValue" name="adversaireValue">
                     <button type="submit" name="creePartie" class="btn btn-primary">Confirmer</button>
                 </form>
             </div>
@@ -56,12 +64,17 @@ $modifie=false;
     document.getElementById("openConfirmationModal").addEventListener("click", function() {
         // Get the password value from the first form
         var password = document.getElementById("nomPartie").value;
+        var advS = document.getElementById("advS").value;
         // Check if the password field is empty
         if (password.trim() === "") {
             alert("S'il vous plait éntrer un nom de partie.");
-        } else {
+        } else if(advS.trim() === ""){
+            alert("S'il vous plait choisir votre adversaire.");
+        }
+        else {
             // Set the password value to the hidden input field in the confirmation form
             document.getElementById("nomPartieValue").value = password;
+            document.getElementById("adversaireValue").value = advS;
             // Open the confirmation modal
             var myModal = new bootstrap.Modal(document.getElementById('exampleModal'));
             myModal.show();

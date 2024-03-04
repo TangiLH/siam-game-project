@@ -159,7 +159,7 @@ function creePartie(){
     try {
     $db = connexpdo("../db/projet-web2");
     $sql = 'INSERT INTO Parties (plateau, idJoueur1,idJoueur2) 
-    VALUES ("'.$_POST["nomPartieValue"].'", '.$_SESSION['user']['id'].', '.$_SESSION['user']['id'].')';
+    VALUES ("'.$_POST["nomPartieValue"].'", '.$_SESSION['user']['id'].', '.$_POST['adversaireValue'].')';
     $db->exec($sql);
     $db = null;
     setcookie("PartieCreer", true, time()+1);
@@ -171,12 +171,23 @@ function creePartie(){
   }
 }
 /*
+* Affichier les utilisateur en tanque des options pour la balise select
+*/ 
+function usersAsOptions(){
+  $users=users();
+  foreach($users as $user){
+    if($user->getId()!=$_SESSION['user']['id']){
+      echo '<option value="'.$user->getId().'" >'.$user->getPseudo().'</option>';
+    }
+  }
+}
+/*
 * Retourne un tableau de toutes les parties
 */ 
 function showParties(){
   $db=connexpdo("../db/projet-web2");
   $tab=array();
-  $sql = 'SELECT idJoueur, pseudo, mdp, estAdmin FROM Utilisateurs';
+  $sql = 'SELECT idJoueur, pseudo, mdp, estAdmin FROM Parties';
   $result = $db->query($sql) ;
   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
       $tab[]=new User($row['idJoueur'],$row['pseudo'],$row['mdp'],$row['estAdmin']);
