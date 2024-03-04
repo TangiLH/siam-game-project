@@ -1,5 +1,9 @@
 <?php
 include("User.php");
+
+/*
+* Function pour connexion a la base sql lite 3 avec PDO
+*/ 
 function connexpdo($base){
     $dsn="sqlite:$base.sqlite3" ;
     try {
@@ -11,6 +15,9 @@ function connexpdo($base){
     return FALSE;
     }
 }
+/*
+* Function pour récupérer tout les utilisateurs depuis la base
+*/ 
 function users(){
     $db=connexpdo("../db/projet-web2");
     $tab=array();
@@ -31,6 +38,9 @@ function users(){
         $db = null;
     }
     
+/*
+* Function pour verifie l'authentification d'un utilisateur
+*/ 
 function verifieLogin($pseudo,$mdp){
     $db=connexpdo("../db/projet-web2");
     if(!verifieByPseudo($pseudo)){
@@ -50,7 +60,9 @@ function verifieLogin($pseudo,$mdp){
 
 
 }
-
+/*
+* Verifie l'existence d'un pseudo dans la base
+*/ 
 function verifieByPseudo($pseudo){
     $users=users();
     foreach ($users as $key => $value) {
@@ -60,7 +72,9 @@ function verifieByPseudo($pseudo){
     }
     return null;
 }
-
+/*
+* Function pour crée un nouveau utilisateur a la base avec les vérification nécessaires
+*/ 
 function register(){
     if(isset($_POST["submit"])){
       if($_POST["mdp"] != $_POST["mdpC"]){
@@ -77,18 +91,27 @@ function register(){
       
     }
   }
+/*
+* Function qui appel la function verifieLogin si la mise en place de la formule est correcte
+*/ 
   function login(){
     if(isset($_POST["submit"])){
       verifieLogin($_POST["pseudo"],$_POST["mdp"]);
       
     }
   }
+/*
+* Une fonction qui vérifie si un passager est authentifié ou pas sinon il lui diriger vers la page login
+*/ 
   function verifieLoginSession(){
     session_start();
     if(!isset($_SESSION['user']["pseudo"])){
         header("Location: login.php");
     }
   }
+/*
+* Function pour détruire la session et déconnecter l'utilisateur
+*/ 
   function logout(){
     if(isset($_POST["logout"])){
         unset($_SESSION['user']);
@@ -96,7 +119,9 @@ function register(){
         header("Location: ../pages/login.php");
     }
   }
-
+/*
+* Pour modifier le mot de passe
+*/ 
   function updatePassword(){
     if(isset($_POST["updateP"])){
         try {
@@ -126,7 +151,9 @@ function register(){
         }
     }
 }
-
+/*
+* pour crée une partie!
+*/ 
 function creePartie(){
   if(isset($_POST["creePartie"])){
     try {
@@ -143,5 +170,18 @@ function creePartie(){
 
   }
 }
-
+/*
+* Retourne un tableau de toutes les parties
+*/ 
+function showParties(){
+  $db=connexpdo("../db/projet-web2");
+  $tab=array();
+  $sql = 'SELECT idJoueur, pseudo, mdp, estAdmin FROM Utilisateurs';
+  $result = $db->query($sql) ;
+  while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+      $tab[]=new User($row['idJoueur'],$row['pseudo'],$row['mdp'],$row['estAdmin']);
+  }
+  $db=null;
+  return $tab;
+  }
 ?>

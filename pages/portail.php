@@ -23,7 +23,7 @@ echo $_SESSION['user']['pseudo'].' '.$_SESSION['user']['estadmin'];
 <div class="d-flex justify-content-center">
     <a class="btn btn-info  btn-lg" href="cree.php">Créer</a>&nbsp;&nbsp;
     <a class="btn btn-info  btn-lg" href="#">Rejoindre</a>&nbsp;&nbsp;
-    <a class="btn btn-info  btn-lg" href="#">Visualiser</a>&nbsp;&nbsp;
+    <a class="btn btn-info  btn-lg" href="#">Votre en cours</a>&nbsp;&nbsp;
 </div>
 
 
