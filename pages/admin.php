@@ -24,15 +24,15 @@ verifieAdmin();
     <form method="post">
     <input class="btn btn-info  btn-lg" type="submit" name="cree" value="Crée un Joueur">&nbsp;&nbsp;
     </form>
-    <a class="btn btn-info  btn-lg" href="partiesJoindre.php">Jouer dans n'importe partie</a>&nbsp;&nbsp;
+    <a class="btn btn-info  btn-lg" href="partiesforadmin.php">Jouer dans n'importe partie</a>&nbsp;&nbsp;
     <a class="btn btn-info  btn-lg" href="partiesEnCours.php">Supprimer une partie</a>&nbsp;&nbsp;
 </div>
-<?php else : ?>
+<?php else: ?>
 
 <h3 class="text-center">Créer Un Joueur</h3>
 <div class="container d-flex justify-content-center">
-    <form  method="post" class="needs-validation">
-        <div class="mb-3">
+    <form  method="post" action="../php/userCreation.php">
+    <div class="mb-3" >
             <label for="nomPartie" class="form-label">Nom</label>
             <input type="text" name="pseudo" class="form-control" id="nomPartie" required>
         </div>
@@ -45,10 +45,10 @@ verifieAdmin();
             <input type="password" name="mdpC" class="form-control" id="nomPartie" required>
         </div>
         
-        <input class="btn btn-primary  btn-lg" type="submit" name="submitCree" value="Crée">&nbsp;&nbsp;
+        <input class="btn btn-primary  btn-lg" type="submit" name="testx" value="Crée">&nbsp;&nbsp;
     </form>
-
-    <?php creeUserParAdmin(); ?>
+    <?php  creeUserParAdmin(); ?>
+    
 </div>
 
 <?php endif; ?>

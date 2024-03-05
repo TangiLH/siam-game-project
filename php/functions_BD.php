@@ -303,16 +303,47 @@ function verifieAdmin(){
 * Function pour crée un nouveau utilisateur a la base avec les vérification nécessaires
 */ 
 function creeUserParAdmin(){
-  if(isset($_POST["submitCree"])){
+  if(isset($_POST["testx"])){
     if($_POST["mdp"] != $_POST["mdpC"]){
       echo '<script>alert("La confirmation du mot de passe est incorrecte!");</script>';
+      header("refresh:0;url=../pages/admin.php");
     }else if(verifieByPseudo($_POST["pseudo"])){
       echo '<script>alert("Le pseudo existe déjà!");</script>';
+      header("refresh:0;url=../pages/admin.php");
     }else{
       $user=new User(0,$_POST["pseudo"],$_POST["mdp"],0);
       ajouterUtilisateur($user);
-      header("Location: login.php");
+      echo '<script>alert("User has been created");</script>';
+      header("refresh:0;url=../pages/admin.php");
     }
+    
+  }
+  
+}
+
+/*
+* Affichier les parties en cours en tanque des lignes du tableau
+* de l'utilisateur courant 
+*/ 
+function partiesPourAdmin(){
+  $parties=parties();
+  foreach($parties as $partie){
+      if($partie->getIdJoueurGagnant()==""){
+        $j1=getJoueurById($partie->getIdJoueur1());
+        $j2=getJoueurById($partie->getIdJoueur2());
+        echo '<tr>
+        <th scope="row">'.$partie->getId().'</th>
+        <td>'.$partie->getPlateau().'</td>
+        <td>'.$j1->getPseudo().'</td>
+        <td>'.$j2->getPseudo().'</td>
+        <td>
+        <form method="get">
+          <input type="hidden" value="'.$partie->getId().'" name="id">
+          <input class="btn btn-info  btn-md" type="submit" name="submit" value="Joindre"></input>
+        </form>
+        </td>
+      </tr>';
+      }
     
   }
 }
