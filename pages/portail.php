@@ -24,8 +24,8 @@ include("includes/header.php");
 <?php endif; ?>
 <div class="d-flex justify-content-center">
     <a class="btn btn-info  btn-lg" href="cree.php">Créer</a>&nbsp;&nbsp;
-    <a class="btn btn-info  btn-lg" href="parties.php">Rejoindre</a>&nbsp;&nbsp;
-    <a class="btn btn-info  btn-lg" href="#">Votre en cours</a>&nbsp;&nbsp;
+    <a class="btn btn-info  btn-lg" href="partiesJoindre.php">Joindre</a>&nbsp;&nbsp;
+    <a class="btn btn-info  btn-lg" href="partiesEnCours.php">En cours</a>&nbsp;&nbsp;
 </div>
 
 

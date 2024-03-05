@@ -197,9 +197,10 @@ function parties(){
   return $tab;
   }
 /*
-* Affichier les parties en cours en tanque des lignes du tableau
+* Affichier les parties a joindre en tanque des lignes du tableau
+* de l'utilisateur courant 
 */ 
-function partiesAsRows(){
+function partiesAsRowsJoindre(){
   $parties=parties();
   foreach($parties as $partie){
     if($partie->getIdJoueur1()==$_SESSION["user"]["id"] || $partie->getIdJoueur2()==$_SESSION["user"]["id"]){
@@ -248,12 +249,71 @@ function getPartieById($id){
   return null;
 }
 
-
+/*
+* verifie la mise en place de partie by id
+*/
 function getPartie(){
   if(isset($_GET["submit"])){
     $partie=getPartieById($_GET["id"]);
-    $_SESSION["partie"]["id"]=$_GET["id"];
-    $_SESSION["partie"]["plateau"]=$partie->getPlateau();
+    if($partie->getIdJoueur1()==$_SESSION["user"]["id"]||$partie->getIdJoueur2()==$_SESSION["user"]["id"]){
+      $_SESSION["partie"]["id"]=$_GET["id"];
+      $_SESSION["partie"]["plateau"]=$partie->getPlateau();
+    }else{
+      echo '<script>alert("You dont have permission!")</script>';
+    }
+  }
+}
+
+/*
+* Affichier les parties en cours en tanque des lignes du tableau
+* de l'utilisateur courant 
+*/ 
+function partiesAsRowsCours(){
+  $parties=parties();
+  foreach($parties as $partie){
+    if($partie->getIdJoueur1()==$_SESSION["user"]["id"] || $partie->getIdJoueur2()==$_SESSION["user"]["id"]){
+      if($partie->getIdJoueurGagnant()=="" && $partie->getIdJoueurTour()!=""){
+        $j1=getJoueurById($partie->getIdJoueur1());
+        $j2=getJoueurById($partie->getIdJoueur2());
+        echo '<tr>
+        <th scope="row">'.$partie->getId().'</th>
+        <td>'.$partie->getPlateau().'</td>
+        <td>'.$j1->getPseudo().'</td>
+        <td>'.$j2->getPseudo().'</td>
+        <td>
+        <form method="get">
+          <input type="hidden" value="'.$partie->getId().'" name="id">
+          <input class="btn btn-info  btn-md" type="submit" name="submit" value="Joindre"></input>
+        </form>
+        </td>
+      </tr>';
+      }
+    }
+  }
+}
+// Verifie l'utilisateur est admin ?
+function verifieAdmin(){
+  if(!$_SESSION["user"]["estadmin"]){
+    echo '<script>alert("You dont have permission!")</script>';
+    header("location: ../pages/");
+  }
+}
+
+/*
+* Function pour crée un nouveau utilisateur a la base avec les vérification nécessaires
+*/ 
+function creeUserParAdmin(){
+  if(isset($_POST["submitCree"])){
+    if($_POST["mdp"] != $_POST["mdpC"]){
+      echo '<script>alert("La confirmation du mot de passe est incorrecte!");</script>';
+    }else if(verifieByPseudo($_POST["pseudo"])){
+      echo '<script>alert("Le pseudo existe déjà!");</script>';
+    }else{
+      $user=new User(0,$_POST["pseudo"],$_POST["mdp"],0);
+      ajouterUtilisateur($user);
+      header("Location: login.php");
+    }
+    
   }
 }
 ?>
