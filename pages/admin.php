@@ -25,7 +25,7 @@ verifieAdmin();
     <input class="btn btn-info  btn-lg" type="submit" name="cree" value="Crée un Joueur">&nbsp;&nbsp;
     </form>
     <a class="btn btn-info  btn-lg" href="partiesforadmin.php">Jouer dans n'importe partie</a>&nbsp;&nbsp;
-    <a class="btn btn-info  btn-lg" href="partiesEnCours.php">Supprimer une partie</a>&nbsp;&nbsp;
+    <a class="btn btn-info  btn-lg" href="supprimer.php">Supprimer une partie</a>&nbsp;&nbsp;
 </div>
 <?php else: ?>
 

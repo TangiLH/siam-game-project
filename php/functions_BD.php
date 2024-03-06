@@ -117,7 +117,7 @@ function register(){
     if(isset($_POST["logout"])){
         unset($_SESSION['user']);
         session_destroy();
-        header("Location: ../pages/login.php");
+        header("Location: ../pages/");
     }
   }
 /*
@@ -322,8 +322,8 @@ function creeUserParAdmin(){
 }
 
 /*
-* Affichier les parties en cours en tanque des lignes du tableau
-* de l'utilisateur courant 
+* Affichier toutes les parties en cours en tanque des lignes du tableau
+* pour l'admin
 */ 
 function partiesPourAdmin(){
   $parties=parties();
@@ -346,5 +346,49 @@ function partiesPourAdmin(){
       }
     
   }
+}
+
+function partiesAsOptions(){
+  $parties=parties();
+  $b=false;
+  foreach($parties as $partie){
+      if($partie->getIdJoueurGagnant()==""&&$partie->getIdJoueurTour()!=""){
+        $b=true;
+        $j1=getJoueurById($partie->getIdJoueur1());
+        $j2=getJoueurById($partie->getIdJoueur2());
+        echo '<option value="'.$partie->getId().'" >'
+        .$partie->getId().' '.$partie->getPlateau().' '.$partie->getIdJoueur1().' '.$partie->getIdJoueur2().'</option>';
+      }
+    }
+    return $b;
+}
+
+/*
+* supprimer une Partie
+*/ 
+function supprimerPartie(){
+  if(isset($_POST["supprimer"])){
+    try {
+    $db = connexpdo("../db/projet-web2");
+    $sql = 'DELETE FROM Parties where idParties="'.$_POST["partieId"].'"';
+    $db->exec($sql);
+    $db = null;
+    echo '<script>alert("Partie est bien supprimer!");</script>';
+    header("refresh:0;url=admin.php");
+    }catch(Exception $e) {
+      echo "Error: " . $e->getMessage();
+  }
+
+  }
+}
+
+/*
+* Verfie l'authentification
+*/
+function verifieAuth(){
+  if(isset($_SESSION["user"])){
+    return true;
+  }
+  return false;
 }
 ?>

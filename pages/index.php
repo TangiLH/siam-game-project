@@ -8,12 +8,13 @@
 <body>
     
 <?php 
+session_start();
 include("../php/functions_BD.php");
-verifieLoginSession();
 include("includes/header.php");
 ?>
 
-
+<h3 class="text-center">Welcome to Siam Game!</h3>
+<h6 class="text-center">designed & coded by Mohamed & Tangi!</h6>
 
 </body>
 </html>

@@ -19,7 +19,7 @@ verifieAdmin();
 ?>
 <?php if(!isset($_GET["submit"])) :?>
 <br>
-<h1 class="text-center" >Parties a joindre</h1><br>
+<h1 class="text-center" >Parties a joindre pour admin</h1><br>
 <center>
 <div class="position-relative  m-8 w-75 p-3 ">
 <table class="table">
@@ -33,7 +33,7 @@ verifieAdmin();
     </tr>
   </thead>
   <tbody>
-    <?php partiesAsRowsJoindre(); ?>
+    <?php partiesPourAdmin(); ?>
   </tbody>
 </table>
 </div></center>
