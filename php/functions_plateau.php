@@ -234,11 +234,12 @@ function decodePlateau($str_plateau){
  */
 function afficheLignePlateau($plateau,$numLigne){
     $ligne=$plateau[$numLigne];
+    
     for($j=0;$j<5;$j++){
         $case=$ligne[$j];
         echo "<button type=\"submit\" name=\"caseChoix\" value=\""
         .$numLigne.",".$j."\" style=\"";echo "background-image: url('../img/".afficheCase($case).
-        ".gif'),url('../img/".arrierePlan($$numLigne,$j).".png'),url('../img/VN.gif');";echo"width:80;height:80; \" >"."</button>";
+        ".gif'),url('../img/".arrierePlan($numLigne,$j).".png'),url('../img/VN.gif');";echo"width:80;height:80; \" >"."</button>";
         
     }
     echo "<br>";
@@ -316,9 +317,12 @@ function jouerJeu($plateau,$idCurrent){
             break;
         }
     $res=traitementPlateau($plateau,$tour);
+    print_r($res[0]);
     affichePlateau($res[0]);
     if($res[1]){
         $id=$joueurTour==1?2:1;
+    }else{
+        $id=$idCurrent;
     }
     $bool=verifVictoire($res[0]);
     return array($id,encodePlateau($res[0]),$bool);

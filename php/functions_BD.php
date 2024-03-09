@@ -322,6 +322,8 @@ function rejoindrePartieEnCours(){
       $_SESSION["partie"]["plateau"]=$partie->getPlateau();
       $_SESSION["partie"]["idJoueur1"]=$partie->getIdJoueur1();
       $_SESSION["partie"]["idJoueur2"]=$partie->getIdJoueur2();
+      $_SESSION["partie"]["idJoueurTour"]=$partie->getIdJoueurTour();
+      $_SESSION["partie"]["data"]=$partie->getData();
       header("location: jouerPartie.php");
     }else{
       echo '<script>alert("You dont have permission!")</script>';
