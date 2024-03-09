@@ -115,7 +115,7 @@ enum typeCase implements JsonSerializable{
         array(typeCase::Vide,Direction::Neutre),
         array(typeCase::Vide,Direction::Neutre));
     }
-    $plateau[]=array(array(typeCase::Elephant,Direction::Haut),
+    $plateau[]=array(array(typeCase::Elephant,Direction::Bas),
     array(typeCase::Elephant,Direction::Bas),
     array(typeCase::Elephant,Direction::Bas),
     array(typeCase::Elephant,Direction::Bas),
