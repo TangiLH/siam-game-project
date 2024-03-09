@@ -284,6 +284,9 @@ function updatePartie($idFuture,$data,$bool){
       $sql = 'UPDATE Parties SET idJoueurTour = '.$idJoueurTour.',data=\''.$data.'\' WHERE idParties = '.$_SESSION["partie"]["id"].'';
     }
     $db->exec($sql);
+    $partie=getPartieById($_SESSION["partie"]["id"]);
+    $_SESSION["partie"]["idJoueurTour"]=$partie->getIdJoueurTour();
+    $_SESSION["partie"]["data"]=$partie->getData();
     $db = null;
   }catch(Exception $e){
     echo $e;

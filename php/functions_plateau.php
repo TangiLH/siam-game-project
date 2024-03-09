@@ -317,7 +317,6 @@ function jouerJeu($plateau,$idCurrent){
             break;
         }
     $res=traitementPlateau($plateau,$tour);
-    print_r($res[0]);
     affichePlateau($res[0]);
     if($res[1]){
         $id=$joueurTour==1?2:1;

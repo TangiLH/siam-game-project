@@ -24,7 +24,9 @@ include("includes/header.php");
 <h1 class="text-center"><?php echo $_SESSION["partie"]["plateau"]; ?></h1>
 <?php 
 $tab=jouerJeu($_SESSION["partie"]["data"],$_SESSION["partie"]["idJoueurTour"]==$_SESSION["partie"]["idJoueur1"]?1:2); 
+echo $_SESSION["partie"]["idJoueurTour"].' | '.$_SESSION["user"]["id"].' | '.$_SESSION["user"]["pseudo"];
 updatePartie($tab[0],$tab[1],$tab[2]);
+header("Refresh");
 ?>
 </center>
 <?php else  : header("location: portail.php");?>
