@@ -259,6 +259,7 @@ function afficheBoutonsControle(){
     echo $rotation.Direction::Bas->jsonSerialize()."\">r BAS</button>";
     echo $rotation.Direction::Gauche->jsonSerialize()."\">R GAUCHE</button>";
     echo $rotation.Direction::Droite->jsonSerialize()."\">R DROITE</button>";
+    echo "<button type=\"submit\" name=\"Eject\">retirer piece</button> ";
 }
 
 /**
@@ -293,12 +294,49 @@ function dansTableau($tab,$tableau){
     }
     return $retour;
 }
+function verifVictoire($plateau){
+    return $plateau[7][0][0]==typeCase::Montagne;
+}
+/**
+ * fonction principale. recupere le plateau dans la BDD, traite les actions du joueur, et met à jour la BDD.
+ */
+function jouerJeu(){
+    
+    if(!isset($_SESSION["plateau"])){
+        echo "pouet";
+        $_SESSION["plateau"]=encodePlateau(initPlateau());
+        $_SESSION["tour"]=1;
+    }
+    $plateau=decodePlateau($_SESSION["plateau"]);
+    $joueurTour=$_SESSION["tour"];
+    switch($joueurTour){
+        case 1:
+            $tour=typeCase::Elephant;
+            break;
+        case 2:
+            $tour=typeCase::Rhinoceros;
+            break;
+        default:
+            $tour=typeCase::Elephant;
+            break;
+        }
+    $res=traitementPlateau($plateau,$tour);
+    affichePlateau($res[0]);
+    if($res[1]){
+        $_SESSION["tour"]=$joueurTour==1?2:1;
+    }
+    if(verifVictoire($res[0])){
+        echo "victoire du joueur".$joueurTour;
+    }
+    $_SESSION["plateau"]=encodePlateau($res[0]);
+}
 
 /**
  * traite les actions du joueur sur le plateau grâce à la méthode POST
+ * @return array un tableau avec le plateau modifié et un booleen indiquant si le joueur a fini son tour
  */
 function traitementPlateau($plateau,$joueur){
-        
+        $tourfini=false;
         $cookie=json_decode($_SESSION["actionJoueur"],true);
         if(isset($_POST["supprCaseChoix"])){
             $cookie["caseOrigine"]="";
@@ -309,7 +347,7 @@ function traitementPlateau($plateau,$joueur){
             if($cookie["caseOrigine"]==""){
                 if(!verifChoixCase($caseChoix,$joueur,$plateau)){
                     echo "tricheur!";
-                    return $plateau;
+                    return array($plateau,$tourfini);
                 }
                 $cookie["caseOrigine"]=$caseChoix;
             }
@@ -318,12 +356,13 @@ function traitementPlateau($plateau,$joueur){
                 $caseChoix=$cookie["caseOrigine"];
                 if(!verifChoixCase($caseChoix,$joueur,$plateau)){
                     echo "tricheur!";
-                    return $plateau;
+                    return array($plateau,$tourfini);
                 }
                 $coups=actionsPossiblesCase($plateau,$caseChoix[0],$caseChoix[1]);
                 if(dansTableau($caseDest,$coups)){
                     echo "coup possible";
                     $plateau=joueCoup($caseChoix,$caseDest,$plateau);
+                    $tourfini=true;
                     $cookie["caseDest"]=$_POST["caseChoix"];
                 }
                 else{
@@ -335,25 +374,37 @@ function traitementPlateau($plateau,$joueur){
             $caseChoix=$cookie["caseOrigine"];
             if(!verifChoixCase($caseChoix,$joueur,$plateau)){
                 echo "tricheur!";
-                return $plateau;
+                return array($plateau,$tourfini);
             }
             $plateau=rotationPiece($caseChoix,$_POST["Rotation"],$plateau);
+            if($caseChoix[0]>4){
+                $tourfini=true;
+            }
+        }
+        if(isset($_POST["Eject"])&& $cookie["caseOrigine"]!=""){
+            $caseChoix=$cookie["caseOrigine"];
+            if($caseChoix[0]==0||$caseChoix[0]==4||$caseChoix[1]==0||$caseChoix[1]==4){
+                $plateau=ejecteCase($plateau,$caseChoix[0],$caseChoix[1]);
+                $tourfini=true;
+            }
         }
         $_SESSION["actionJoueur"]=json_encode($cookie);
-        //setcookie("actionJoueur",json_encode($cookie),30*86400);
-        return $plateau;
+        
+        return array($plateau,$tourfini);
 }
 
 function joueCoup($caseChoix,$caseDest,$plateau){
     
-    if($caseChoix[0]>4){
+   // if($caseChoix[0]>4){
         if($plateau[$caseDest[0]][$caseDest[1]][0]!=typeCase::Vide){
             $plateau=pousse($plateau,$caseDest[0],$caseDest[1],$plateau[$caseChoix[0]][$caseChoix[1]][1]);
             
         }
         $plateau=swap($plateau,$caseChoix[0],$caseChoix[1],$caseDest[0],$caseDest[1]);
-    }
-
+   // }
+    //else{
+    //    $plateau=pousse($plateau,$caseDest[0],$caseDest[1],$plateau[$caseChoix[0]][$caseChoix[1]][1]);
+    //}
     return $plateau;
 }
 /**
