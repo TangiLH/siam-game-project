@@ -238,16 +238,17 @@ function afficheLignePlateau($plateau,$numLigne){
         $case=$ligne[$j];
         echo "<button type=\"submit\" name=\"caseChoix\" value=\""
         .$numLigne.",".$j."\" style=\"";echo "background-image: url('../img/".afficheCase($case).
-        ".gif'),url('../img/VN.gif');";echo"width:80;height:80; \" >"."</button>";
+        ".gif'),url('../img/".arrierePlan($$numLigne,$j).".png'),url('../img/VN.gif');";echo"width:80;height:80; \" >"."</button>";
         
     }
     echo "<br>";
 }
 /**
- * retourne le chemin menant à l'image correspondant à la case
+ * retourne la couleur d'arriere plan pour la case
  */
-function getImage($case){
-
+function arrierePlan($ligne,$colonne){
+    $cookie=json_decode($_SESSION["actionJoueur"],true);
+    return "VIDE";
 }
 
 /**
