@@ -8,9 +8,14 @@ class Partie {
     private $idJoueurGagnant;
     private $idJoueurTour;
 
+    private $data;
+
 
     function getPlateau(){
         return $this->plateau;
+    }
+    function getData(){
+        return $this->data;
     }
     function getId(){
         return $this->id;
@@ -28,13 +33,14 @@ class Partie {
         return $this->idJoueurTour;
     }
 
-    function __construct($id,$plateau,$idJoueur1,$idJoueur2,$idJoueurGagnant,$idJoueurTour){
+    function __construct($id,$plateau,$idJoueur1,$idJoueur2,$idJoueurGagnant,$idJoueurTour,$data){
         $this->id=$id;
         $this->plateau=$plateau;
         $this->idJoueur1=$idJoueur1;
         $this->idJoueur2=$idJoueur2;
         $this->idJoueurGagnant=$idJoueurGagnant;
         $this->idJoueurTour=$idJoueurTour;
+        $this->data=$data;
     }
     
 }

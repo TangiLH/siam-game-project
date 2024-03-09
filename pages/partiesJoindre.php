@@ -37,9 +37,7 @@ include("includes/header.php");
   </tbody>
 </table>
 </div></center>
-<?php else  : getPartie();?>
-<h1 class="text-center"><?php echo $_SESSION["partie"]["plateau"]; ?></h1>
-    
+<?php else  : getPartie();?>    
 <?php endif; ?>
 
 </body>
