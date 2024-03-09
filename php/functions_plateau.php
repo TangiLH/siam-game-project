@@ -116,10 +116,10 @@ enum typeCase implements JsonSerializable{
         array(typeCase::Vide,Direction::Neutre));
     }
     $plateau[]=array(array(typeCase::Elephant,Direction::Haut),
-    array(typeCase::Elephant,Direction::Haut),
-    array(typeCase::Elephant,Direction::Haut),
-    array(typeCase::Elephant,Direction::Haut),
-    array(typeCase::Elephant,Direction::Haut));
+    array(typeCase::Elephant,Direction::Bas),
+    array(typeCase::Elephant,Direction::Bas),
+    array(typeCase::Elephant,Direction::Bas),
+    array(typeCase::Elephant,Direction::Bas));
     $plateau[]=array(array(typeCase::Rhinoceros,Direction::Haut),
     array(typeCase::Rhinoceros,Direction::Haut),
     array(typeCase::Rhinoceros,Direction::Haut),
@@ -188,7 +188,7 @@ function afficheCase($case){
             $strDirection= "Err";
             break;
         }
-        return $strType." ".$strDirection;
+        return $strType."".$strDirection;
 }
 /**
  * encode le plateau en JSON
@@ -237,22 +237,23 @@ function afficheLignePlateau($plateau,$numLigne){
     for($j=0;$j<5;$j++){
         $case=$ligne[$j];
         echo "<button type=\"submit\" name=\"caseChoix\" value=\""
-        .$numLigne.",".$j."\">".afficheCase($case)."</button>";
+        .$numLigne.",".$j."\" style=\"";echo "background-image: url('../img/".afficheCase($case).
+        ".gif'),url('../img/VN.gif');";echo"width:80;height:80; \" >"."</button>";
         
     }
     echo "<br>";
+}
+/**
+ * retourne le chemin menant à l'image correspondant à la case
+ */
+function getImage($case){
+
 }
 
 /**
  * affiche les bouton pour contrôler les pions
  */
 function afficheBoutonsControle(){
-    $deplacement="<button type=\"submit\" name=\"Deplacement\" value=\"";
-    echo $deplacement.Direction::Haut->name."\">HAUT</button>";
-    echo $deplacement.Direction::Bas->name."\">BAS</button>";
-    echo $deplacement.Direction::Gauche->name."\">GAUCHE</button>";
-    echo $deplacement.Direction::Droite->name."\">DROITE</button>";
-    echo"</br>";
 
     $rotation="<button type=\"submit\" name=\"Rotation\" value=\"";
     echo $rotation.Direction::Haut->jsonSerialize()."\">r HAUT</button>";
@@ -266,7 +267,7 @@ function afficheBoutonsControle(){
  * affiche le plateau et les boutons de contrôle
  */
 function affichePlateau($plateau){
-    echo "<form method=\"POST\">";
+    echo "<form method=\"POST\" >";
     afficheLignePlateau($plateau,5);
     echo "</br>";
     for($i=0;$i<5;$i++){
@@ -277,7 +278,6 @@ function affichePlateau($plateau){
     afficheLignePlateau($plateau,6);
     echo "</br>";
     afficheBoutonsControle();
-    echo "<button type=\"submit\" name=\"submitCoup\">Valide</button>";
     echo "<button type=\"submit\" name=\"supprCaseChoix\">Decocher case</button>";
     echo "</form>";
 }
@@ -346,7 +346,7 @@ function traitementPlateau($plateau,$joueur){
             
             if($cookie["caseOrigine"]==""){
                 if(!verifChoixCase($caseChoix,$joueur,$plateau)){
-                    echo "tricheur!";
+                    echo "choix impossible";
                     return array($plateau,$tourfini);
                 }
                 $cookie["caseOrigine"]=$caseChoix;
@@ -377,7 +377,7 @@ function traitementPlateau($plateau,$joueur){
                 return array($plateau,$tourfini);
             }
             $plateau=rotationPiece($caseChoix,$_POST["Rotation"],$plateau);
-            if($caseChoix[0]>4){
+            if($caseChoix[0]<5){
                 $tourfini=true;
             }
         }
