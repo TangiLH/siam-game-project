@@ -320,7 +320,7 @@ function getPartie(){
 function rejoindrePartieEnCours(){
   if(isset($_GET["submit"])){
     $partie=getPartieById($_GET["id"]);
-    if($partie->getIdJoueur1()==$_SESSION["user"]["id"]||$partie->getIdJoueur2()==$_SESSION["user"]["id"]){
+    if($partie->getIdJoueur1()==$_SESSION["user"]["id"]||$partie->getIdJoueur2()==$_SESSION["user"]["id"] ||$_SESSION["user"]["estadmin"]){
       $_SESSION["partie"]["id"]=$_GET["id"];
       $_SESSION["partie"]["plateau"]=$partie->getPlateau();
       $_SESSION["partie"]["idJoueur1"]=$partie->getIdJoueur1();
@@ -399,7 +399,7 @@ function creeUserParAdmin(){
 function partiesPourAdmin(){
   $parties=parties();
   foreach($parties as $partie){
-      if($partie->getIdJoueurGagnant()==""){
+      if($partie->getIdJoueurGagnant()==""&&$partie->getIdJoueurTour()!=""){
         $j1=getJoueurById($partie->getIdJoueur1());
         $j2=getJoueurById($partie->getIdJoueur2());
         echo '<tr>

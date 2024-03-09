@@ -37,7 +37,7 @@ verifieAdmin();
   </tbody>
 </table>
 </div></center>
-<?php else  : getPartie();?>
+<?php else  : rejoindrePartieEnCours()?>
 <h1 class="text-center"><?php echo $_SESSION["partie"]["plateau"]; ?></h1>
     
 <?php endif; ?>
