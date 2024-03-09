@@ -255,10 +255,10 @@ function afficheBoutonsControle(){
     echo"</br>";
 
     $rotation="<button type=\"submit\" name=\"Rotation\" value=\"";
-    echo $rotation.Direction::Haut->name."\">r HAUT</button>";
-    echo $rotation.Direction::Bas->name."\">r BAS</button>";
-    echo $rotation.Direction::Gauche->name."\">R GAUCHE</button>";
-    echo $rotation.Direction::Droite->name."\">R DROITE</button>";
+    echo $rotation.Direction::Haut->jsonSerialize()."\">r HAUT</button>";
+    echo $rotation.Direction::Bas->jsonSerialize()."\">r BAS</button>";
+    echo $rotation.Direction::Gauche->jsonSerialize()."\">R GAUCHE</button>";
+    echo $rotation.Direction::Droite->jsonSerialize()."\">R DROITE</button>";
 }
 
 /**
@@ -297,7 +297,7 @@ function dansTableau($tab,$tableau){
 /**
  * traite les actions du joueur sur le plateau grâce à la méthode POST
  */
-function traitementPlateau($plateau){
+function traitementPlateau($plateau,$joueur){
         
         $cookie=json_decode($_SESSION["actionJoueur"],true);
         if(isset($_POST["supprCaseChoix"])){
@@ -305,15 +305,25 @@ function traitementPlateau($plateau){
         }
         if(isset($_POST["caseChoix"])){
             $caseChoix=array($_POST["caseChoix"][0],$_POST["caseChoix"][2]);
+            
             if($cookie["caseOrigine"]==""){
+                if(!verifChoixCase($caseChoix,$joueur,$plateau)){
+                    echo "tricheur!";
+                    return $plateau;
+                }
                 $cookie["caseOrigine"]=$caseChoix;
             }
             else{
                 $caseDest=$caseChoix;
                 $caseChoix=$cookie["caseOrigine"];
+                if(!verifChoixCase($caseChoix,$joueur,$plateau)){
+                    echo "tricheur!";
+                    return $plateau;
+                }
                 $coups=actionsPossiblesCase($plateau,$caseChoix[0],$caseChoix[1]);
                 if(dansTableau($caseDest,$coups)){
                     echo "coup possible";
+                    $plateau=joueCoup($caseChoix,$caseDest,$plateau);
                     $cookie["caseDest"]=$_POST["caseChoix"];
                 }
                 else{
@@ -321,14 +331,56 @@ function traitementPlateau($plateau){
                 }
             }
         }
-        else{
-            echo "b";
+        if(isset($_POST["Rotation"]) && $cookie["caseOrigine"]!=""){
+            $caseChoix=$cookie["caseOrigine"];
+            if(!verifChoixCase($caseChoix,$joueur,$plateau)){
+                echo "tricheur!";
+                return $plateau;
+            }
+            $plateau=rotationPiece($caseChoix,$_POST["Rotation"],$plateau);
         }
         $_SESSION["actionJoueur"]=json_encode($cookie);
         //setcookie("actionJoueur",json_encode($cookie),30*86400);
-        
-    
+        return $plateau;
 }
+
+function joueCoup($caseChoix,$caseDest,$plateau){
+    
+    if($caseChoix[0]>4){
+        if($plateau[$caseDest[0]][$caseDest[1]][0]!=typeCase::Vide){
+            $plateau=pousse($plateau,$caseDest[0],$caseDest[1],$plateau[$caseChoix[0]][$caseChoix[1]][1]);
+            
+        }
+        $plateau=swap($plateau,$caseChoix[0],$caseChoix[1],$caseDest[0],$caseDest[1]);
+    }
+
+    return $plateau;
+}
+/**
+ * effectue la rotation de la piece
+ * @param $piece la piece à pivoter
+ * @param $direction la direction après rotation
+ * @param $plateau le plateau de jeu
+ * @return array le plateau modifié
+ */
+function rotationPiece($piece,$direction,$plateau){
+    $dir=Direction::jsonDeSerialize($direction);
+    $plateau[$piece[0]][$piece[1]][1]=$dir;
+    return $plateau;
+
+}
+
+/**
+ *verifie que la case choisie par le joueur est valide (pas une case vide ni une case de l'adversaire)
+ *@param $case la case choisie
+ *@param $joueur le joueur actif
+ *@param $plateau le plateau de jeu
+ *@return bool vrai si le choix est autorisé 
+  */
+  function verifChoixCase($case,$joueur,$plateau){
+    $c=$plateau[$case[0]][$case[1]];
+    return $c[0]==$joueur;
+  }
 
 /**
  * Verifie si une poussée est possible
@@ -387,7 +439,9 @@ function verifPousse($plateau,$ligne,$colonne,$directionPion,$directionPoussee){
     else{
         $cpt++;
         while($ligne<5 && $ligne >=0 && $colonne<5 && $colonne >=0){
-            
+            if($plateau[$ligne][$colonne][0]==typeCase::Vide){
+                break;
+            }
             if($plateau[$ligne][$colonne][1]==$directionPoussee){
                 $cpt++;
             }
@@ -450,6 +504,10 @@ function ejecteCase($plateau,$ligne,$colonne){
 
 /**
  * effectue la poussee sans verification
+ * @param $plateau le plateau de jeu
+ * @param $ligne la ligne de depart de la poussee
+ * @param $colonne la colonne de depart de la poussee
+ * @param $directionPoussee la direction de poussee
  */
 function pousse($plateau,$ligne,$colonne,$directionPoussee){
     $borneInfLigne=0;
@@ -465,38 +523,79 @@ function pousse($plateau,$ligne,$colonne,$directionPoussee){
     switch($directionPoussee){//traitement de la direction de poussee
         case Direction::Haut:
             $nextLigne =function()use(&$ligne){//fonction d'incrementation de la boucle
-                return $ligne+1;
+                return $ligne-1;
             };
             $borneSupLigne=$ligne;
-            $ligne=0;
+            break;
+        case Direction::Bas:
+            $nextLigne =function()use(&$ligne){
+                return $ligne+1;
+            };
+            $borneInfLigne=$ligne;
+            break;
+        case Direction::Gauche:
+            $nextColonne =function()use(&$colonne){
+                return $colonne-1;
+            };
+            $borneSupColonne=$colonne;
+            break;
+        case Direction::Droite:
+            $nextColonne =function()use(&$colonne){
+                return $colonne+1;
+            };
+            $borneInfColonne=$colonne;
+            break;
+        default:
+            break;
+    }
+    
+    //premire boucle parcourt jusqu'à trouver la dernière case à pousser
+    while($nextLigne()<=$borneSupLigne && $nextLigne() >=$borneInfLigne
+    && $nextColonne()<=$borneSupColonne && $nextColonne() >=$borneInfColonne){
+        if($plateau[$ligne][$colonne]==typeCase::Vide){
+            break;
+        }
+        $ligne=$nextLigne();
+        $colonne=$nextColonne();
+    }
+    
+    
+    if($ligne==0||$ligne==4||$colonne==0||$colonne==4){
+        $plateau=ejecteCase($plateau,$ligne,$colonne);
+    }
+    
+    //deuxieme boucle parcourt à l'envers depuis la dernière case à déplacer
+    switch($directionPoussee){//traitement de la direction de poussee
+        case Direction::Haut:
+            $nextLigne =function()use(&$ligne){//fonction d'incrementation de la boucle
+                return $ligne+1;
+            };
+            
             break;
         case Direction::Bas:
             $nextLigne =function()use(&$ligne){
                 return $ligne-1;
             };
-            $borneInfLigne=$ligne;
-            $ligne=4;
+            
             break;
         case Direction::Gauche:
             $nextColonne =function()use(&$colonne){
                 return $colonne+1;
             };
-            $borneSupColonne=$colonne;
-            $colonne=0;
+            
             break;
         case Direction::Droite:
             $nextColonne =function()use(&$colonne){
                 return $colonne-1;
             };
-            $borneInfColonne=$colonne;
-            $colonne=4;
+            
             break;
         default:
             break;
     }
-    $plateau=ejecteCase($plateau,$ligne,$colonne);
     while($nextLigne()<=$borneSupLigne && $nextLigne() >=$borneInfLigne
-    && $nextColonne<=$borneSupColonne && $nextColonne >=$borneInfColonne){
+    && $nextColonne()<=$borneSupColonne && $nextColonne() >=$borneInfColonne){
+        
         $plateau=swap($plateau, $ligne,$colonne,$nextLigne(),$nextColonne());
         $ligne=$nextLigne();
         $colonne=$nextColonne();
@@ -547,16 +646,16 @@ function actionsPossiblesCase($plateau,$ligne,$colonne){
     }
     elseif($ligne<7){
         for($i=0;$i<5;$i++){
-            if(verifPousse($plateau,$i,0,Direction::Droite,Direction::Droite)){
+            if(verifPousse($plateau,$i,0,$case[1],Direction::Droite)){
                 $retour[]=array($i,0);
             }
-            if(verifPousse($plateau,$i,4,Direction::Gauche,Direction::Gauche)){
+            if(verifPousse($plateau,$i,4,$case[1],Direction::Gauche)){
                 $retour[]=array($i,4);
             }
-            if(verifPousse($plateau,0,$i,Direction::Bas,Direction::Bas)){
+            if(verifPousse($plateau,0,$i,$case[1],Direction::Bas)){
                 $retour[]=array(0,$i);
             }
-            if(verifPousse($plateau,4,$i,Direction::Haut,Direction::Haut)){
+            if(verifPousse($plateau,4,$i,$case[1],Direction::Haut)){
                 $retour[]=array(4,$i);
             }
         }
