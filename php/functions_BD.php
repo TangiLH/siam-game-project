@@ -1,6 +1,7 @@
 <?php
 include("User.php");
 include("Partie.php");
+include_once("../php/functions_plateau.php");
 
 /*
 * Function pour connexion a la base sql lite 3 avec PDO
@@ -155,12 +156,14 @@ function register(){
 /*
 * pour crée une partie!
 */ 
+
 function creePartie(){
   if(isset($_POST["creePartie"])){
     try {
+    $data=encodePlateau(initPlateau());
     $db = connexpdo("../db/projet-web2");
-    $sql = 'INSERT INTO Parties (plateau, idJoueur1,idJoueur2) 
-    VALUES ("'.$_POST["nomPartieValue"].'", '.$_SESSION['user']['id'].', '.$_POST['adversaireValue'].')';
+    $sql = 'INSERT INTO Parties (plateau, idJoueur1,idJoueur2,data) 
+    VALUES ("'.$_POST["nomPartieValue"].'", '.$_SESSION['user']['id'].', '.$_POST['adversaireValue'].',\''.$data.'\')';
     $db->exec($sql);
     $db = null;
     setcookie("PartieCreer", true, time()+1);
@@ -191,7 +194,8 @@ function parties(){
   $sql = 'SELECT * FROM Parties';
   $result = $db->query($sql) ;
   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-      $tab[]=new Partie($row['idParties'],$row['plateau'],$row['idJoueur1'],$row['idJoueur2'],$row['idJoueurGagnant'],$row['idJoueurTour']);
+      $tab[]=$partie=new Partie($row['idParties'],$row['plateau'],$row['idJoueur1'],$row['idJoueur2'],$row['idJoueurGagnant'],$row['idJoueurTour'],$row['data']);
+
   }
   $db=null;
   return $tab;
@@ -248,6 +252,43 @@ function getPartieById($id){
   }
   return null;
 }
+/*
+* Pour commencer la partie avec le joueur courant
+*/
+function partieCommence(){
+  try{
+
+    $db = connexpdo("../db/projet-web2");
+    $sql = 'UPDATE Parties SET idJoueurTour = '.$_SESSION['user']['id'].' WHERE idParties = '.$_SESSION["partie"]["id"].'';
+    $db->exec($sql);
+    $db = null;
+  }catch(Exception $e){
+    echo $e;
+  }
+}
+/*
+* mise a jour la partie avec les changement
+*/
+function updatePartie($idFuture,$data,$bool){
+  try{
+    $db = connexpdo("../db/projet-web2");
+    if($bool){
+      $sql = 'UPDATE Parties SET idJoueurGagnant = '.$_SESSION['user']['id'].' WHERE idParties = '.$_SESSION["partie"]["id"].'';
+      
+    }else{
+      if($idFuture==2){
+        $idJoueurTour=$_SESSION["partie"]["idJoueur2"];
+      }else{
+        $idJoueurTour=$_SESSION["partie"]["idJoueur1"];
+      }
+      $sql = 'UPDATE Parties SET idJoueurTour = '.$idJoueurTour.',data=\''.$data.'\' WHERE idParties = '.$_SESSION["partie"]["id"].'';
+    }
+    $db->exec($sql);
+    $db = null;
+  }catch(Exception $e){
+    echo $e;
+  }
+}
 
 /*
 * verifie la mise en place de partie by id
@@ -258,8 +299,33 @@ function getPartie(){
     if($partie->getIdJoueur1()==$_SESSION["user"]["id"]||$partie->getIdJoueur2()==$_SESSION["user"]["id"]){
       $_SESSION["partie"]["id"]=$_GET["id"];
       $_SESSION["partie"]["plateau"]=$partie->getPlateau();
+      $_SESSION["partie"]["idJoueur1"]=$partie->getIdJoueur1();
+      $_SESSION["partie"]["idJoueur2"]=$partie->getIdJoueur2();
+      $_SESSION["partie"]["idJoueurTour"]=$partie->getIdJoueurTour();
+      $_SESSION["partie"]["data"]=$partie->getData();
+      partieCommence();
+      header("location: jouerPartie.php");
     }else{
       echo '<script>alert("You dont have permission!")</script>';
+      header("refresh:0;url=../pages/portail.php");
+    }
+  }
+}
+/*
+* Rejoundre une partie pour un utilisateur courrant
+*/
+function rejoindrePartieEnCours(){
+  if(isset($_GET["submit"])){
+    $partie=getPartieById($_GET["id"]);
+    if($partie->getIdJoueur1()==$_SESSION["user"]["id"]||$partie->getIdJoueur2()==$_SESSION["user"]["id"]){
+      $_SESSION["partie"]["id"]=$_GET["id"];
+      $_SESSION["partie"]["plateau"]=$partie->getPlateau();
+      $_SESSION["partie"]["idJoueur1"]=$partie->getIdJoueur1();
+      $_SESSION["partie"]["idJoueur2"]=$partie->getIdJoueur2();
+      header("location: jouerPartie.php");
+    }else{
+      echo '<script>alert("You dont have permission!")</script>';
+      header("refresh:0;url=../pages/portail.php");
     }
   }
 }
@@ -391,4 +457,7 @@ function verifieAuth(){
   }
   return false;
 }
+
+
+
 ?>

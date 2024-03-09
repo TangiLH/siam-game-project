@@ -301,15 +301,9 @@ function verifVictoire($plateau){
 /**
  * fonction principale. recupere le plateau dans la BDD, traite les actions du joueur, et met à jour la BDD.
  */
-function jouerJeu(){
-    
-    if(!isset($_SESSION["plateau"])){
-        echo "pouet";
-        $_SESSION["plateau"]=encodePlateau(initPlateau());
-        $_SESSION["tour"]=1;
-    }
-    $plateau=decodePlateau($_SESSION["plateau"]);
-    $joueurTour=$_SESSION["tour"];
+function jouerJeu($plateau,$idCurrent){
+    $plateau=decodePlateau($plateau);
+    $joueurTour=$idCurrent;
     switch($joueurTour){
         case 1:
             $tour=typeCase::Elephant;
@@ -324,12 +318,10 @@ function jouerJeu(){
     $res=traitementPlateau($plateau,$tour);
     affichePlateau($res[0]);
     if($res[1]){
-        $_SESSION["tour"]=$joueurTour==1?2:1;
+        $id=$joueurTour==1?2:1;
     }
-    if(verifVictoire($res[0])){
-        echo "victoire du joueur".$joueurTour;
-    }
-    $_SESSION["plateau"]=encodePlateau($res[0]);
+    $bool=verifVictoire($res[0]);
+    return array($id,encodePlateau($res[0]),$bool);
 }
 
 /**
