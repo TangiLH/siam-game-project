@@ -248,7 +248,11 @@ function afficheLignePlateau($plateau,$numLigne){
  * retourne la couleur d'arriere plan pour la case
  */
 function arrierePlan($ligne,$colonne){
-    $cookie=json_decode($_SESSION["actionJoueur"],true);
+    if(isset($_SESSION["actionJoueur"])){
+        $cookie=json_decode($_SESSION["actionJoueur"],true);
+    }else{
+        $cookie=array();
+    }
     return "VIDE";
 }
 

@@ -1,3 +1,4 @@
+<?php header("Refresh"); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -31,7 +32,7 @@ else{
     affichePlateau(decodePlateau($_SESSION["partie"]["data"]));
 }
 
-header("Refresh");
+
 ?>
 </center>
 <?php else  : header("location: portail.php");?>
