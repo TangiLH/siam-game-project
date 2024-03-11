@@ -232,14 +232,15 @@ function decodePlateau($str_plateau){
 /**
  * affiche une ligne du plateau passé en paramètre, avec les boutons
  */
-function afficheLignePlateau($plateau,$numLigne){
+function afficheLignePlateau($plateau,$numLigne,$joueur){
     $ligne=$plateau[$numLigne];
     
     for($j=0;$j<5;$j++){
         $case=$ligne[$j];
         echo "<button type=\"submit\" name=\"caseChoix\" value=\""
         .$numLigne.",".$j."\" style=\"";echo "background-image: url('../img/".afficheCase($case).
-        ".gif'),url('../img/".arrierePlan($numLigne,$j).".png'),url('../img/VN.gif');";echo"width:80px;height:80px; \" >"."</button>";
+        ".gif'),url('../img/".arrierePlan($numLigne,$j,$plateau,$joueur).".png'),url('../img/VN.gif');";
+        echo"width:80px;height:80px; \" >"."</button>";
         
     }
     echo "<br>";
@@ -247,13 +248,27 @@ function afficheLignePlateau($plateau,$numLigne){
 /**
  * retourne la couleur d'arriere plan pour la case
  */
-function arrierePlan($ligne,$colonne){
+function arrierePlan($ligne,$colonne,$plateau,$joueur){
+    $retour="VIDE";
     if(isset($_SESSION["actionJoueur"])){
         $cookie=json_decode($_SESSION["actionJoueur"],true);
-    }else{
-        $cookie=array();
+        $caseChoix=$cookie["caseOrigine"];
+        $coups=actionsPossiblesCase($caseChoix[0],$caseChoix[1],$plateau);
+        $case=array($ligne,$colonne);
+        if($case==$caseChoix){
+            $retour="BLEU";
+        }
+        elseif(dansTableau(array($ligne,$colonne),$coups)){
+            $retour= "VERT";
+        }
+
+    }elseif(isset($joueur)){
+        $case=$plateau[$ligne][$colonne];
+        if($case[0]==$joueur){
+            $retour="VERT";
+        }
     }
-    return "VIDE";
+    return $retour;
 }
 
 /**
@@ -272,16 +287,16 @@ function afficheBoutonsControle(){
 /**
  * affiche le plateau et les boutons de contrôle
  */
-function affichePlateau($plateau){
+function affichePlateau($plateau,$joueur){
     echo "<form method=\"POST\" >";
-    afficheLignePlateau($plateau,5);
+    afficheLignePlateau($plateau,5,$joueur);
     echo "</br>";
     for($i=0;$i<5;$i++){
-        afficheLignePlateau($plateau,$i);
+        afficheLignePlateau($plateau,$i,$joueur);
         
     }
     echo "</br>";
-    afficheLignePlateau($plateau,6);
+    afficheLignePlateau($plateau,6,$joueur);
     echo "</br>";
     afficheBoutonsControle();
     echo "<button type=\"submit\" name=\"supprCaseChoix\">Decocher case</button>";
@@ -321,7 +336,7 @@ function jouerJeu($plateau,$idCurrent){
             break;
         }
     $res=traitementPlateau($plateau,$tour);
-    affichePlateau($res[0]);
+    affichePlateau($res[0],$tour);
     if($res[1]){
         $id=$joueurTour==1?2:1;
         unset($_SESSION["actionJoueur"]);

@@ -35,7 +35,7 @@ else{
     $partie=getPartieById($_SESSION["partie"]["id"]);
     $_SESSION["partie"]["idJoueurTour"]=$partie->getIdJoueurTour();
     $_SESSION["partie"]["data"]=$partie->getData();
-    affichePlateau(decodePlateau($_SESSION["partie"]["data"]));
+    affichePlateau(decodePlateau($_SESSION["partie"]["data"]),null);
     
 }
 
