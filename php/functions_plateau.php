@@ -239,7 +239,7 @@ function afficheLignePlateau($plateau,$numLigne,$joueur){
         $case=$ligne[$j];
         echo "<button type=\"submit\" name=\"caseChoix\" value=\""
         .$numLigne.",".$j."\" style=\"";echo "background-image: url('../img/".afficheCase($case).
-        ".gif'),url('../img/".arrierePlan($numLigne,$j,$plateau,$joueur).".png'),url('../img/VN.png');";
+        ".gif'),url('../img/".arrierePlan($numLigne,$j,$plateau,$joueur).".gif');";
         echo"width:80px;height:80px; \" >"."</button>";
         
     }
@@ -249,7 +249,7 @@ function afficheLignePlateau($plateau,$numLigne,$joueur){
  * retourne la couleur d'arriere plan pour la case
  */
 function arrierePlan($ligne,$colonne,$plateau,$joueur){
-    $retour="VIDE";
+    $retour="VN";
     if(isset($_SESSION["actionJoueur"])){
         $cookie=json_decode($_SESSION["actionJoueur"],true);
     }
