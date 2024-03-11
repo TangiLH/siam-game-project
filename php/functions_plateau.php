@@ -250,7 +250,7 @@ function afficheLignePlateau($plateau,$numLigne,$joueur){
  */
 function arrierePlan($ligne,$colonne,$plateau,$joueur){
     $retour="VIDE";
-    if(isset($_SESSION["actionJoueur"])){
+    if(isset($_SESSION["actionJoueur"])&&isset($cookie["caseOrigine"])){
         $cookie=json_decode($_SESSION["actionJoueur"],true);
         $caseChoix=$cookie["caseOrigine"];
         $coups=actionsPossiblesCase($caseChoix[0],$caseChoix[1],$plateau);
