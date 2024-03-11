@@ -25,11 +25,18 @@ include("includes/header.php");
 <h1 class="text-center"><?php echo $_SESSION["partie"]["plateau"]; ?></h1>
 <?php
 if($_SESSION["partie"]["idJoueurTour"]==$_SESSION["user"]["id"]) {
+    echo "    Your Turn";
     $tab=jouerJeu($_SESSION["partie"]["data"],$_SESSION["partie"]["idJoueurTour"]==$_SESSION["partie"]["idJoueur1"]?1:2); 
     updatePartie($tab[0],$tab[1],$tab[2]);
+    
 }
 else{
+    echo "   Not your Turn!";
+    $partie=getPartieById($_SESSION["partie"]["id"]);
+    $_SESSION["partie"]["idJoueurTour"]=$partie->getIdJoueurTour();
+    $_SESSION["partie"]["data"]=$partie->getData();
     affichePlateau(decodePlateau($_SESSION["partie"]["data"]));
+    
 }
 
 

@@ -194,8 +194,8 @@ function parties(){
   $sql = 'SELECT * FROM Parties';
   $result = $db->query($sql) ;
   while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-      $tab[]=$partie=new Partie($row['idParties'],$row['plateau'],$row['idJoueur1'],$row['idJoueur2'],$row['idJoueurGagnant'],$row['idJoueurTour'],$row['data']);
-
+      $partie=new Partie($row['idParties'],$row['plateau'],$row['idJoueur1'],$row['idJoueur2'],$row['idJoueurGagnant'],$row['idJoueurTour'],$row['data']);
+      $tab[]=$partie;
   }
   $db=null;
   return $tab;
