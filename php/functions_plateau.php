@@ -255,7 +255,7 @@ function arrierePlan($ligne,$colonne,$plateau,$joueur){
     }
     if(isset($cookie["caseOrigine"])){
         $caseChoix=$cookie["caseOrigine"];
-        $coups=actionsPossiblesCase($caseChoix[0],$caseChoix[1],$plateau);
+        $coups=actionsPossiblesCase($plateau,$caseChoix[0],$caseChoix[1]);
         $case=array($ligne,$colonne);
         if($case==$caseChoix){
             $retour="BLEU";
