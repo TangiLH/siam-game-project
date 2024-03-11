@@ -370,7 +370,6 @@ function traitementPlateau($plateau,$joueur){
                     $plateau=joueCoup($caseChoix,$caseDest,$plateau);
                     $tourfini=true;
                     $cookie["caseDest"]=$_POST["caseChoix"];
-                    //unset($_SESSION["actionJoueur"]);
                 }
                 else{
                     echo "coup impossible";
@@ -386,7 +385,6 @@ function traitementPlateau($plateau,$joueur){
             $plateau=rotationPiece($caseChoix,$_POST["Rotation"],$plateau);
             if($caseChoix[0]<5){
                 $tourfini=true;
-                //unset($_SESSION["actionJoueur"]);
             }
         }
         if(isset($_POST["Eject"])&& $cookie["caseOrigine"]!=""){
@@ -394,7 +392,6 @@ function traitementPlateau($plateau,$joueur){
             if($caseChoix[0]==0||$caseChoix[0]==4||$caseChoix[1]==0||$caseChoix[1]==4){
                 $plateau=ejecteCase($plateau,$caseChoix[0],$caseChoix[1]);
                 $tourfini=true;
-                //unset($_SESSION["actionJoueur"]);
             }
         }
         $_SESSION["actionJoueur"]=json_encode($cookie);
@@ -531,9 +528,11 @@ function swap($plateau,$ligneDep,$colonneDep,$ligneArr,$colonneArr){
  */
 function insereListe($ligne,$case){
     $retour=array();
+    $done=false;
     foreach($ligne as $c){
-        if($c[0]->name=="Vide"){
+        if($c[0]->name=="Vide" && !$done){
             $c=$case;
+            $done=true;
         }
         $retour[]=$c;
     }
