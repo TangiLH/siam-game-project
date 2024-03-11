@@ -250,8 +250,10 @@ function afficheLignePlateau($plateau,$numLigne,$joueur){
  */
 function arrierePlan($ligne,$colonne,$plateau,$joueur){
     $retour="VIDE";
-    if(isset($_SESSION["actionJoueur"])&&isset($cookie["caseOrigine"])){
+    if(isset($_SESSION["actionJoueur"])){
         $cookie=json_decode($_SESSION["actionJoueur"],true);
+    }
+    if(isset($cookie["caseOrigine"])){
         $caseChoix=$cookie["caseOrigine"];
         $coups=actionsPossiblesCase($caseChoix[0],$caseChoix[1],$plateau);
         $case=array($ligne,$colonne);
@@ -261,8 +263,8 @@ function arrierePlan($ligne,$colonne,$plateau,$joueur){
         elseif(dansTableau(array($ligne,$colonne),$coups)){
             $retour= "VERT";
         }
-
-    }elseif(isset($joueur)){
+    }
+    elseif(isset($joueur)){
         $case=$plateau[$ligne][$colonne];
         if($case[0]==$joueur){
             $retour="VERT";
