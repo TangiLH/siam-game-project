@@ -345,12 +345,12 @@ function traitementPlateau($plateau,$joueur){
             $cookie=array();
         }
         if(isset($_POST["supprCaseChoix"])){
-            $cookie["caseOrigine"]="";
+            unset($cookie["caseOrigine"]);
         }
         if(isset($_POST["caseChoix"])){
             $caseChoix=array($_POST["caseChoix"][0],$_POST["caseChoix"][2]);
             
-            if($cookie["caseOrigine"]==""){
+            if(!isset($cookie["caseOrigine"])){
                 if(!verifChoixCase($caseChoix,$joueur,$plateau)){
                     echo "choix impossible";
                     return array($plateau,$tourfini);
