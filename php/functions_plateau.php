@@ -239,7 +239,7 @@ function afficheLignePlateau($plateau,$numLigne,$joueur){
         $case=$ligne[$j];
         echo "<button type=\"submit\" name=\"caseChoix\" value=\""
         .$numLigne.",".$j."\" style=\"";echo "background-image: url('../img/".afficheCase($case).
-        ".gif'),url('../img/".arrierePlan($numLigne,$j,$plateau,$joueur).".png'),url('../img/VN.gif');";
+        ".gif'),url('../img/".arrierePlan($numLigne,$j,$plateau,$joueur).".png'),url('../img/VN.png');";
         echo"width:80px;height:80px; \" >"."</button>";
         
     }
