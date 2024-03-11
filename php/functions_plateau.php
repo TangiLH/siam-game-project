@@ -260,7 +260,7 @@ function arrierePlan($ligne,$colonne,$plateau,$joueur){
         if($case==$caseChoix){
             $retour="BLEU";
         }
-        elseif(dansTableau(array($ligne,$colonne),$coups)){
+        elseif(dansTableau($case,$coups)){
             $retour= "VERT";
         }
     }
