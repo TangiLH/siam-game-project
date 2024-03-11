@@ -324,6 +324,7 @@ function jouerJeu($plateau,$idCurrent){
     affichePlateau($res[0]);
     if($res[1]){
         $id=$joueurTour==1?2:1;
+        unset($_SESSION["actionJoueur"]);
     }else{
         $id=$idCurrent;
     }
@@ -369,7 +370,7 @@ function traitementPlateau($plateau,$joueur){
                     $plateau=joueCoup($caseChoix,$caseDest,$plateau);
                     $tourfini=true;
                     $cookie["caseDest"]=$_POST["caseChoix"];
-                    unset($_SESSION["actionJoueur"]);
+                    //unset($_SESSION["actionJoueur"]);
                 }
                 else{
                     echo "coup impossible";
@@ -385,7 +386,7 @@ function traitementPlateau($plateau,$joueur){
             $plateau=rotationPiece($caseChoix,$_POST["Rotation"],$plateau);
             if($caseChoix[0]<5){
                 $tourfini=true;
-                unset($_SESSION["actionJoueur"]);
+                //unset($_SESSION["actionJoueur"]);
             }
         }
         if(isset($_POST["Eject"])&& $cookie["caseOrigine"]!=""){
@@ -393,7 +394,7 @@ function traitementPlateau($plateau,$joueur){
             if($caseChoix[0]==0||$caseChoix[0]==4||$caseChoix[1]==0||$caseChoix[1]==4){
                 $plateau=ejecteCase($plateau,$caseChoix[0],$caseChoix[1]);
                 $tourfini=true;
-                unset($_SESSION["actionJoueur"]);
+                //unset($_SESSION["actionJoueur"]);
             }
         }
         $_SESSION["actionJoueur"]=json_encode($cookie);
