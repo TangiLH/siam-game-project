@@ -249,7 +249,7 @@ function afficheLignePlateau($plateau,$numLigne,$joueur){
  * retourne la couleur d'arriere plan pour la case
  */
 function arrierePlan($ligne,$colonne,$plateau,$joueur){
-    $retour="VN";
+    $retour="CASE";
     if(isset($_SESSION["actionJoueur"])){
         $cookie=json_decode($_SESSION["actionJoueur"],true);
     }
@@ -370,9 +370,15 @@ function traitementPlateau($plateau,$joueur){
             if(!isset($cookie["caseOrigine"])){
                 if(!verifChoixCase($caseChoix,$joueur,$plateau)){
                     echo "choix impossible";
-                    return array($plateau,$tourfini);
+                    //return array($plateau,$tourfini);
                 }
-                $cookie["caseOrigine"]=$caseChoix;
+                else{
+                   $cookie["caseOrigine"]=$caseChoix; 
+                }
+                
+            }
+            elseif($cookie["caseOrigine"]==$caseChoix){
+                unset($cookie["caseOrigine"]);
             }
             else{
                 $caseDest=$caseChoix;
@@ -386,6 +392,7 @@ function traitementPlateau($plateau,$joueur){
                     echo "coup possible";
                     $plateau=joueCoup($caseChoix,$caseDest,$plateau);
                     $tourfini=true;
+                    unset($cookie["caseOrigine"]);
                     $cookie["caseDest"]=$_POST["caseChoix"];
                 }
                 else{
@@ -393,7 +400,7 @@ function traitementPlateau($plateau,$joueur){
                 }
             }
         }
-        if(isset($_POST["Rotation"]) && $cookie["caseOrigine"]!=""){
+        elseif(isset($_POST["Rotation"]) && $cookie["caseOrigine"]!=""){
             $caseChoix=$cookie["caseOrigine"];
             if(!verifChoixCase($caseChoix,$joueur,$plateau)){
                 echo "tricheur!";
@@ -402,13 +409,15 @@ function traitementPlateau($plateau,$joueur){
             $plateau=rotationPiece($caseChoix,$_POST["Rotation"],$plateau);
             if($caseChoix[0]<5){
                 $tourfini=true;
+                unset($cookie["caseOrigine"]);
             }
         }
-        if(isset($_POST["Eject"])&& $cookie["caseOrigine"]!=""){
+        elseif(isset($_POST["Eject"])&& $cookie["caseOrigine"]!=""){
             $caseChoix=$cookie["caseOrigine"];
             if($caseChoix[0]==0||$caseChoix[0]==4||$caseChoix[1]==0||$caseChoix[1]==4){
                 $plateau=ejecteCase($plateau,$caseChoix[0],$caseChoix[1]);
                 $tourfini=true;
+                unset($cookie["caseOrigine"]);
             }
         }
         $_SESSION["actionJoueur"]=json_encode($cookie);
@@ -569,7 +578,7 @@ function ejecteCase($plateau,$ligne,$colonne){
             $plateau[6]=insereListe($plateau[6],array(typeCase::Rhinoceros,Direction::Haut));
             break;
         case typeCase::Elephant:
-            $plateau[5]=insereListe($plateau[5],array(typeCase::Elephant,Direction::Haut));
+            $plateau[5]=insereListe($plateau[5],array(typeCase::Elephant,Direction::Bas));
             break;
         default:
             break;
