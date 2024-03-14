@@ -1,4 +1,4 @@
-<?php header("refresh: 5;"); ?>
+<?php  ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,14 +35,19 @@ if(isset($_SESSION["partie"]["idJoueurGagnant"])){
     affichePlateau(decodePlateau($_SESSION["partie"]["data"]),null);
 }
 elseif($_SESSION["partie"]["idJoueurTour"]==$_SESSION["user"]["id"]) {
-    echo "    Your Turn";
+    $typeCaseJoueur=$_SESSION["partie"]["idJoueurTour"]==$_SESSION["partie"]["idJoueur1"]
+    ?numToTypeCase(1):numToTypeCase(2);
     $tab=jouerJeu($_SESSION["partie"]["data"],
-    $_SESSION["partie"]["idJoueurTour"]==$_SESSION["partie"]["idJoueur1"]?1:2); 
+    $_SESSION["partie"]["idJoueurTour"]==$_SESSION["partie"]["idJoueur1"]?1:2);
     updatePartie($tab[0],$tab[1],$tab[2]);
+    $typeCaseJoueur=$_SESSION["partie"]["idJoueurTour"]==$_SESSION["user"]["id"]?$typeCaseJoueur:null;
+    echo "A vous de jouer !";
+    affichePlateau(decodePlateau($_SESSION["partie"]["data"]),$typeCaseJoueur);
     
 }
 else{
-    echo "   Not your Turn!";
+    header("refresh: 5;");
+    echo "L'adversaire joue...";
     $partie=getPartieById($_SESSION["partie"]["id"]);
     $_SESSION["partie"]["idJoueurTour"]=$partie->getIdJoueurTour();
     $_SESSION["partie"]["data"]=$partie->getData();

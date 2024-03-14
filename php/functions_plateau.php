@@ -319,31 +319,42 @@ function dansTableau($tab,$tableau){
     }
     return $retour;
 }
+/**
+ * verifie si la partie est gagnée (montagne sortie du plateau)
+ */
 function verifVictoire($plateau){
     return $plateau[7][0][0]==typeCase::Montagne;
 }
+
+function numToTypeCase($num){
+    switch($num){
+        case 1:
+            $ret=typeCase::Elephant;
+            break;
+        case 2:
+            $ret=typeCase::Rhinoceros;
+            break;
+        default:
+            $ret=typeCase::Elephant;
+            break;
+        }
+        return $ret;
+}
 /**
  * fonction principale. recupere le plateau dans la BDD, traite les actions du joueur, et met à jour la BDD.
+ * @param $plateau le plateau de jeau
+ * @param $idCurrent le joueur dont c'est le tour (1,2, ou null )
  */
 function jouerJeu($plateau,$idCurrent){
     $plateau=decodePlateau($plateau);
     $joueurTour=$idCurrent;
-    switch($joueurTour){
-        case 1:
-            $tour=typeCase::Elephant;
-            break;
-        case 2:
-            $tour=typeCase::Rhinoceros;
-            break;
-        default:
-            $tour=typeCase::Elephant;
-            break;
-        }
+    $tour=numToTypeCase($idCurrent);
     $res=traitementPlateau($plateau,$tour);
-    affichePlateau($res[0],$tour);
+    //affichePlateau($res[0],$tour);
     if($res[1]){
         $id=$joueurTour==1?2:1;
         unset($_SESSION["actionJoueur"]);
+        
     }else{
         $id=$idCurrent;
     }
@@ -513,11 +524,11 @@ function verifPousse($plateau,$ligne,$colonne,$directionPion,$directionPoussee){
     }
 
     if($directionPoussee!=$directionPion){
-        if(!($ligne<5 && $ligne >=0 && $colonne<5 && $colonne >=0)){
+        if(($ligne<5 && $ligne >=0 && $colonne<5 && $colonne >=0)){
             
-            return true;
+            return $plateau[$ligne][$colonne][0]==typeCase::Vide;
         }
-        return $plateau[$ligne][$colonne][0]==typeCase::Vide;
+        
         //deplacement hors sens de poussee possible vers une case vide
     }
     else{
@@ -533,8 +544,8 @@ function verifPousse($plateau,$ligne,$colonne,$directionPion,$directionPoussee){
                 $cpt--;
             }
             
-            $ligne=$nextLigne($ligne);
-            $colonne=$nextColonne($colonne);
+            $ligne=$nextLigne();
+            $colonne=$nextColonne();
         }
     }
     return $cpt>0;
@@ -639,6 +650,7 @@ function pousse($plateau,$ligne,$colonne,$directionPoussee){
     while($nextLigne()<=$borneSupLigne && $nextLigne() >=$borneInfLigne
     && $nextColonne()<=$borneSupColonne && $nextColonne() >=$borneInfColonne){
         if($plateau[$ligne][$colonne]==typeCase::Vide){
+            echo "$ligne $colonne";
             break;
         }
         $ligne=$nextLigne();

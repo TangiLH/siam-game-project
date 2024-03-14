@@ -37,7 +37,7 @@ include("includes/header.php");
   </tbody>
 </table>
 </div></center>
-<?php else  : getPartie();?>    
+<?php else  : getPartie();?>
 <?php endif; ?>
 
 </body>

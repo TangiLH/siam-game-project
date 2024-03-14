@@ -200,10 +200,10 @@ function parties(){
   $db=null;
   return $tab;
   }
-/*
+/** 
 * Affichier les parties a joindre en tanque des lignes du tableau
-* de l'utilisateur courant 
-*/ 
+* de l'utilisateur courant
+*/
 function partiesAsRowsJoindre(){
   $parties=parties();
   foreach($parties as $partie){
@@ -259,7 +259,7 @@ function partieCommence(){
   try{
 
     $db = connexpdo("../db/projet-web2");
-    $sql = 'UPDATE Parties SET idJoueurTour = '.$_SESSION['user']['id'].'
+    $sql = 'UPDATE Parties SET idJoueurTour = idJoueur1
      WHERE idParties = '.$_SESSION["partie"]["id"].'';
     $db->exec($sql);
     $db = null;
