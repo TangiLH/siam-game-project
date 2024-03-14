@@ -275,7 +275,7 @@ function updatePartie($idFuture,$data,$bool){
     $db = connexpdo("../db/projet-web2");
     if($bool){
       $sql = 'UPDATE Parties SET idJoueurGagnant = '.$_SESSION['user']['id'].',
-       data=\''.$data.'\' WHERE idParties = '.$_SESSION["partie"]["id"].'';
+       data=\''.$data.'\',idJoueurTour=NULL WHERE idParties = '.$_SESSION["partie"]["id"].'';
       
     }else{
       if($idFuture==2){

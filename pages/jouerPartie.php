@@ -40,7 +40,10 @@ elseif($_SESSION["partie"]["idJoueurTour"]==$_SESSION["user"]["id"]) {
     $tab=jouerJeu($_SESSION["partie"]["data"],
     $_SESSION["partie"]["idJoueurTour"]==$_SESSION["partie"]["idJoueur1"]?1:2);
     updatePartie($tab[0],$tab[1],$tab[2]);
-    $typeCaseJoueur=$_SESSION["partie"]["idJoueurTour"]==$_SESSION["user"]["id"]?$typeCaseJoueur:null;
+    if($_SESSION["partie"]["idJoueurTour"]!=$_SESSION["user"]["id"]){
+        $typeCaseJoueur=null;
+        header("refresh: 0;");
+    }
     echo "A vous de jouer !";
     affichePlateau(decodePlateau($_SESSION["partie"]["data"]),$typeCaseJoueur);
     

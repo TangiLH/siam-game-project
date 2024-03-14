@@ -646,15 +646,15 @@ function pousse($plateau,$ligne,$colonne,$directionPoussee){
             break;
     }
     
-    //premire boucle parcourt jusqu'à trouver la dernière case à pousser
+    //premiere boucle parcourt jusqu'à trouver la dernière case à pousser
     while($nextLigne()<=$borneSupLigne && $nextLigne() >=$borneInfLigne
     && $nextColonne()<=$borneSupColonne && $nextColonne() >=$borneInfColonne){
-        if($plateau[$ligne][$colonne]==typeCase::Vide){
-            echo "$ligne $colonne";
-            break;
-        }
         $ligne=$nextLigne();
         $colonne=$nextColonne();
+        if($plateau[$ligne][$colonne][0]==typeCase::Vide){
+            break;
+        }
+        
     }
     
     
