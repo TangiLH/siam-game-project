@@ -1,4 +1,4 @@
-<?php header("Refresh"); ?>
+<?php header("refresh: 5;"); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,10 +8,10 @@
 </head>
 <body>
     
-<?php 
-include("../php/functions_BD.php");
+<?php
+include_once "../php/functions_BD.php";
 verifieLoginSession();
-include("includes/header.php");
+include_once "includes/header.php";
 
 
 
@@ -24,9 +24,20 @@ include("includes/header.php");
 <center>
 <h1 class="text-center"><?php echo $_SESSION["partie"]["plateau"]; ?></h1>
 <?php
-if($_SESSION["partie"]["idJoueurTour"]==$_SESSION["user"]["id"]) {
+refreshData();
+if(isset($_SESSION["partie"]["idJoueurGagnant"])){
+    if($_SESSION["partie"]["idJoueurGagnant"]==$_SESSION["user"]["id"]){
+        echo "<h2>Vous avez gagné !</h2>";
+    }
+    else{
+        echo "<h2> L'adversaire a gagné ! </h2>";
+    }
+    affichePlateau(decodePlateau($_SESSION["partie"]["data"]),null);
+}
+elseif($_SESSION["partie"]["idJoueurTour"]==$_SESSION["user"]["id"]) {
     echo "    Your Turn";
-    $tab=jouerJeu($_SESSION["partie"]["data"],$_SESSION["partie"]["idJoueurTour"]==$_SESSION["partie"]["idJoueur1"]?1:2); 
+    $tab=jouerJeu($_SESSION["partie"]["data"],
+    $_SESSION["partie"]["idJoueurTour"]==$_SESSION["partie"]["idJoueur1"]?1:2); 
     updatePartie($tab[0],$tab[1],$tab[2]);
     
 }

@@ -259,7 +259,8 @@ function partieCommence(){
   try{
 
     $db = connexpdo("../db/projet-web2");
-    $sql = 'UPDATE Parties SET idJoueurTour = '.$_SESSION['user']['id'].' WHERE idParties = '.$_SESSION["partie"]["id"].'';
+    $sql = 'UPDATE Parties SET idJoueurTour = '.$_SESSION['user']['id'].'
+     WHERE idParties = '.$_SESSION["partie"]["id"].'';
     $db->exec($sql);
     $db = null;
   }catch(Exception $e){
@@ -273,7 +274,8 @@ function updatePartie($idFuture,$data,$bool){
   try{
     $db = connexpdo("../db/projet-web2");
     if($bool){
-      $sql = 'UPDATE Parties SET idJoueurGagnant = '.$_SESSION['user']['id'].' WHERE idParties = '.$_SESSION["partie"]["id"].'';
+      $sql = 'UPDATE Parties SET idJoueurGagnant = '.$_SESSION['user']['id'].',
+       data=\''.$data.'\' WHERE idParties = '.$_SESSION["partie"]["id"].'';
       
     }else{
       if($idFuture==2){
@@ -281,18 +283,26 @@ function updatePartie($idFuture,$data,$bool){
       }else{
         $idJoueurTour=$_SESSION["partie"]["idJoueur1"];
       }
-      $sql = 'UPDATE Parties SET idJoueurTour = '.$idJoueurTour.',data=\''.$data.'\' WHERE idParties = '.$_SESSION["partie"]["id"].'';
+      $sql = 'UPDATE Parties SET idJoueurTour = '.$idJoueurTour.',
+      data=\''.$data.'\' WHERE idParties = '.$_SESSION["partie"]["id"].'';
     }
     $db->exec($sql);
-    $partie=getPartieById($_SESSION["partie"]["id"]);
-    $_SESSION["partie"]["idJoueurTour"]=$partie->getIdJoueurTour();
-    $_SESSION["partie"]["data"]=$partie->getData();
+    refreshData();
     $db = null;
   }catch(Exception $e){
     echo $e;
   }
 }
 
+/**
+ * met à jour les variables de SESSION avec les nouvelles données de la partie
+ */
+function refreshData(){
+  $partie=getPartieById($_SESSION["partie"]["id"]);
+    $_SESSION["partie"]["idJoueurTour"]=$partie->getIdJoueurTour();
+    $_SESSION["partie"]["data"]=$partie->getData();
+    $_SESSION["partie"]["idJoueurGagnant"]=$partie->getIdJoueurGagnant();
+}
 /*
 * verifie la mise en place de partie by id
 */

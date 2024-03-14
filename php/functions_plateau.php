@@ -236,11 +236,13 @@ function afficheLignePlateau($plateau,$numLigne,$joueur){
     $ligne=$plateau[$numLigne];
     
     for($j=0;$j<5;$j++){
+        $arrierePlan=arrierePlan($numLigne,$j,$plateau,$joueur);
+        $desactiver=$arrierePlan=="CASE"?"disabled":"";
         $case=$ligne[$j];
         echo "<button type=\"submit\" name=\"caseChoix\" value=\""
         .$numLigne.",".$j."\" style=\"";echo "background-image: url('../img/".afficheCase($case).
-        ".gif'),url('../img/".arrierePlan($numLigne,$j,$plateau,$joueur).".gif');";
-        echo"width:80px;height:80px; \" >"."</button>";
+        ".gif'),url('../img/".$arrierePlan.".gif');";
+        echo"width:80px;height:80px; \"".$desactiver." >"."</button>";
         
     }
     echo "<br>";
@@ -370,7 +372,6 @@ function traitementPlateau($plateau,$joueur){
             if(!isset($cookie["caseOrigine"])){
                 if(!verifChoixCase($caseChoix,$joueur,$plateau)){
                     echo "choix impossible";
-                    //return array($plateau,$tourfini);
                 }
                 else{
                    $cookie["caseOrigine"]=$caseChoix; 
