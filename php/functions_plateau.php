@@ -325,7 +325,7 @@ function affichePlateau($plateau,$joueur){
          Attention: si la piece est en jeu, cela compte comme un coup.</p>";
         echo $eject? "<p>Retirer pièce permet de retirer une pièce en bord de plateau.</p>":"";
     }
-    else{
+    elseif($joueur){
         echo "<p>Choisissez une pièce.</p>";
     }
     

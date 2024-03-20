@@ -359,12 +359,16 @@ function partiesAsRowsCours(){
         $j1=getJoueurById($partie->getIdJoueur1());
         $j2=getJoueurById($partie->getIdJoueur2());
         $jtour=getJoueurById($partie->getIdJoueurTour());
+        $couleur="white";
+        if($partie->getIdJoueur2()==$_SESSION["user"]["id"]){
+          $couleur="green";
+        }
         echo '<tr>
         <th scope="row">'.$partie->getId().'</th>
         <td>'.$partie->getPlateau().'</td>
         <td>'.$j1->getPseudo().'</td>
         <td>'.$j2->getPseudo().'</td>
-        <td>'.$jtour->getPseudo().'</td>
+        <td style="background-color:'.$couleur.';">'.$jtour->getPseudo().'</td>
         <td>
         <form method="get">
           <input type="hidden" value="'.$partie->getId().'" name="id">
