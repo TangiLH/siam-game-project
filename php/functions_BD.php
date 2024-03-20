@@ -358,11 +358,13 @@ function partiesAsRowsCours(){
       if($partie->getIdJoueurGagnant()=="" && $partie->getIdJoueurTour()!=""){
         $j1=getJoueurById($partie->getIdJoueur1());
         $j2=getJoueurById($partie->getIdJoueur2());
+        $jtour=getJoueurById($partie->getIdJoueurTour());
         echo '<tr>
         <th scope="row">'.$partie->getId().'</th>
         <td>'.$partie->getPlateau().'</td>
         <td>'.$j1->getPseudo().'</td>
         <td>'.$j2->getPseudo().'</td>
+        <td>'.$jtour->getPseudo().'</td>
         <td>
         <form method="get">
           <input type="hidden" value="'.$partie->getId().'" name="id">

@@ -27,8 +27,9 @@ include("includes/header.php");
     <tr>
       <th scope="col">ID</th>
       <th scope="col">Nom</th>
-      <th scope="col">Joueur 1</th>
-      <th scope="col">Joueur 2</th>
+      <th scope="col">Joueur 1 - Elephants</th>
+      <th scope="col">Joueur 2 - Rhinoceros</th>
+      <th scope="col">Tour</th>
       <th scope="col">Rejoindre</th>
     </tr>
   </thead>
