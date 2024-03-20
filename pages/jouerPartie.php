@@ -39,7 +39,7 @@ elseif($_SESSION["partie"]["idJoueurTour"]==$_SESSION["user"]["id"]) {
     ?numToTypeCase(1):numToTypeCase(2);
     $tab=jouerJeu($_SESSION["partie"]["data"],
     $_SESSION["partie"]["idJoueurTour"]==$_SESSION["partie"]["idJoueur1"]?1:2);
-    updatePartie($tab[0],$tab[1],$tab[2]);
+    updatePartie($tab[0],$tab[1][0],$tab[2]);
     if($_SESSION["partie"]["idJoueurTour"]!=$_SESSION["user"]["id"]){
         $typeCaseJoueur=null;
         header("refresh: 0;");
@@ -48,12 +48,30 @@ elseif($_SESSION["partie"]["idJoueurTour"]==$_SESSION["user"]["id"]) {
     affichePlateau(decodePlateau($_SESSION["partie"]["data"]),$typeCaseJoueur);
     
 }
+elseif($_SESSION["user"]["estadmin"]){
+    $typeCaseJoueur=$_SESSION["partie"]["idJoueurTour"]==$_SESSION["partie"]["idJoueur1"]
+    ?numToTypeCase(1):numToTypeCase(2);
+    $tab=jouerJeu($_SESSION["partie"]["data"],
+    $_SESSION["partie"]["idJoueurTour"]==$_SESSION["partie"]["idJoueur1"]?1:2);
+    updatePartie($tab[0],$tab[1][0],$tab[2]);
+    if($tab[1][1]){
+        header("refresh: 0;");
+    }
+    echo "A vous de jouer !";
+    affichePlateau(decodePlateau($_SESSION["partie"]["data"]),$typeCaseJoueur);
+}
 else{
     header("refresh: 5;");
     echo "L'adversaire joue...";
     $partie=getPartieById($_SESSION["partie"]["id"]);
     $_SESSION["partie"]["idJoueurTour"]=$partie->getIdJoueurTour();
     $_SESSION["partie"]["data"]=$partie->getData();
+
+        $cookie=json_decode($_SESSION["actionJoueur"],true);
+        unset($cookie["caseOrigine"]);
+        $_SESSION["actionJoueur"]=json_encode($cookie);
+        
+    
     affichePlateau(decodePlateau($_SESSION["partie"]["data"]),null);
     
 }

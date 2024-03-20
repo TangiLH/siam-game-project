@@ -35,7 +35,8 @@ function users(){
         $db = connexpdo("../db/projet-web2");
         
         $hash = password_hash($user->getMdp(), PASSWORD_DEFAULT);
-        $sql = 'INSERT INTO Utilisateurs (pseudo, mdp, estAdmin) VALUES ("'.$user->getPseudo().'", "'.$hash.'", '.$user->getEstAdmin().')';
+        $sql = 'INSERT INTO Utilisateurs (pseudo, mdp, estAdmin) 
+        VALUES ("'.$user->getPseudo().'", "'.$hash.'", '.$user->getEstAdmin().')';
         $db->exec($sql);
         $db = null;
     }
@@ -330,7 +331,8 @@ function getPartie(){
 function rejoindrePartieEnCours(){
   if(isset($_GET["submit"])){
     $partie=getPartieById($_GET["id"]);
-    if($partie->getIdJoueur1()==$_SESSION["user"]["id"]||$partie->getIdJoueur2()==$_SESSION["user"]["id"] ||$_SESSION["user"]["estadmin"]){
+    if($partie->getIdJoueur1()==$_SESSION["user"]["id"]||
+    $partie->getIdJoueur2()==$_SESSION["user"]["id"] ||$_SESSION["user"]["estadmin"]){
       $_SESSION["partie"]["id"]=$_GET["id"];
       $_SESSION["partie"]["plateau"]=$partie->getPlateau();
       $_SESSION["partie"]["idJoueur1"]=$partie->getIdJoueur1();

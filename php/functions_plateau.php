@@ -234,18 +234,23 @@ function decodePlateau($str_plateau){
  */
 function afficheLignePlateau($plateau,$numLigne,$joueur){
     $ligne=$plateau[$numLigne];
-    
+    $cpt=0;//sert a determiner combien de cases sont jouables
+    $bord=false;//sert a savoir si la piece selectionnée est en bord de plateau
     for($j=0;$j<5;$j++){
-        $arrierePlan=arrierePlan($numLigne,$j,$plateau,$joueur);
+        $get=arrierePlan($numLigne,$j,$plateau,$joueur);
+        $arrierePlan=$get[0];
+        $bord=$get[1];
+        $cpt+=$arrierePlan=="BLEU"?1:0;
         $desactiver=$arrierePlan=="CASE"?"disabled":"";
         $case=$ligne[$j];
         echo "<button type=\"submit\" name=\"caseChoix\" value=\""
         .$numLigne.",".$j."\" style=\"";echo "background-image: url('../img/".afficheCase($case).
         ".gif'),url('../img/".$arrierePlan.".gif');";
-        echo"width:80px;height:80px; \"".$desactiver." >"."</button>";
+        echo"height:12.5%;padding: 2%;box-sizing: border-box;background-size: cover;  \"".$desactiver." >"."</button>";
         
     }
     echo "<br>";
+    return array($cpt!=0,$bord);//si aucune case n'est jouable, retourne faux
 }
 /**
  * retourne la couleur d'arriere plan pour la case
@@ -257,10 +262,14 @@ function arrierePlan($ligne,$colonne,$plateau,$joueur){
     }
     if(isset($cookie["caseOrigine"])){
         $caseChoix=$cookie["caseOrigine"];
+        $bool=false;
         $coups=actionsPossiblesCase($plateau,$caseChoix[0],$caseChoix[1]);
         $case=array($ligne,$colonne);
         if($case==$caseChoix){
             $retour="BLEU";
+            if($ligne==0||$ligne==4||$colonne==0||$colonne==4){
+                $bool=true;
+            }
         }
         elseif(dansTableau($case,$coups)){
             $retour= "VERT";
@@ -272,38 +281,55 @@ function arrierePlan($ligne,$colonne,$plateau,$joueur){
             $retour="VERT";
         }
     }
-    return $retour;
+    return array($retour,$bool);
 }
 
 /**
  * affiche les bouton pour contrôler les pions
  */
-function afficheBoutonsControle(){
+function afficheBoutonsControle($eject){
 
     $rotation="<button type=\"submit\" name=\"Rotation\" value=\"";
     echo $rotation.Direction::Haut->jsonSerialize()."\">r HAUT</button>";
     echo $rotation.Direction::Bas->jsonSerialize()."\">r BAS</button>";
     echo $rotation.Direction::Gauche->jsonSerialize()."\">R GAUCHE</button>";
     echo $rotation.Direction::Droite->jsonSerialize()."\">R DROITE</button>";
-    echo "<button type=\"submit\" name=\"Eject\">retirer piece</button> ";
+    if($eject){
+        echo "<button type=\"submit\" name=\"Eject\">retirer piece</button> ";
+    }
+    echo "<button type=\"submit\" name=\"supprCaseChoix\">Decocher case</button>";
 }
 
 /**
  * affiche le plateau et les boutons de contrôle
  */
 function affichePlateau($plateau,$joueur){
-    echo "<form method=\"POST\" >";
-    afficheLignePlateau($plateau,5,$joueur);
+    echo "<form method=\"POST\" style=\"height:80%;\">";
+    $boutonsControle=false;
+    $eject=false;
+    $retour=afficheLignePlateau($plateau,5,$joueur);
+    $boutonsControle=$retour[0]||$boutonsControle;
     echo "</br>";
     for($i=0;$i<5;$i++){
-        afficheLignePlateau($plateau,$i,$joueur);
-        
+        $retour=afficheLignePlateau($plateau,$i,$joueur);
+        $boutonsControle=$retour[0]||$boutonsControle;
+        $eject=$retour[1]||$eject;
     }
     echo "</br>";
-    afficheLignePlateau($plateau,6,$joueur);
-    echo "</br>";
-    afficheBoutonsControle();
-    echo "<button type=\"submit\" name=\"supprCaseChoix\">Decocher case</button>";
+    $retour=afficheLignePlateau($plateau,6,$joueur);
+    $boutonsControle=$retour[0]||$boutonsControle;
+    if($boutonsControle){
+        echo "</br>";
+        afficheBoutonsControle($eject);
+        echo "<p>Utilisez ces boutons pour faire tourner la pièce sélectionnée.
+         Attention: si la piece est en jeu, cela compte comme un coup.</p>";
+        echo $eject? "<p>Retirer pièce permet de retirer une pièce en bord de plateau.</p>":"";
+    }
+    else{
+        echo "<p>Choisissez une pièce.</p>";
+    }
+    
+    
     echo "</form>";
 }
 
@@ -353,13 +379,12 @@ function jouerJeu($plateau,$idCurrent){
     //affichePlateau($res[0],$tour);
     if($res[1]){
         $id=$joueurTour==1?2:1;
-        unset($_SESSION["actionJoueur"]);
         
     }else{
         $id=$idCurrent;
     }
     $bool=verifVictoire($res[0]);
-    return array($id,encodePlateau($res[0]),$bool);
+    return array($id,array(encodePlateau($res[0]),$res[1]),$bool);
 }
 
 /**
@@ -397,6 +422,8 @@ function traitementPlateau($plateau,$joueur){
                 $caseChoix=$cookie["caseOrigine"];
                 if(!verifChoixCase($caseChoix,$joueur,$plateau)){
                     echo "tricheur!";
+                    unset($cookie["caseOrigine"]);
+                    $_SESSION["actionJoueur"]=json_encode($cookie);
                     return array($plateau,$tourfini);
                 }
                 $coups=actionsPossiblesCase($plateau,$caseChoix[0],$caseChoix[1]);
@@ -416,6 +443,8 @@ function traitementPlateau($plateau,$joueur){
             $caseChoix=$cookie["caseOrigine"];
             if(!verifChoixCase($caseChoix,$joueur,$plateau)){
                 echo "tricheur!";
+                unset($cookie["caseOrigine"]);
+                $_SESSION["actionJoueur"]=json_encode($cookie);
                 return array($plateau,$tourfini);
             }
             $plateau=rotationPiece($caseChoix,$_POST["Rotation"],$plateau);
