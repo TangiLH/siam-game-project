@@ -257,6 +257,7 @@ function afficheLignePlateau($plateau,$numLigne,$joueur){
  */
 function arrierePlan($ligne,$colonne,$plateau,$joueur){
     $retour="CASE";
+    $bool=false;
     if(isset($_SESSION["actionJoueur"])){
         $cookie=json_decode($_SESSION["actionJoueur"],true);
     }
